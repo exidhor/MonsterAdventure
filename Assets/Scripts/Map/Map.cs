@@ -16,7 +16,7 @@ namespace MonsterAdventure
         private RandomGenerator _random;
 
         public void Construct(Vector2 mapSize, Vector2 tileSize,
-            int largetFeature, double persistance, RandomGenerator random)
+            SimplexNoiseEntry simplexNoiseEntry, RandomGenerator random)
         {
             _random = random;
 
@@ -24,7 +24,7 @@ namespace MonsterAdventure
 
             InitSize(mapSize, tileSize);
 
-            _noise = new SimplexNoise(largetFeature, persistance, _random);
+            _noise = new SimplexNoise(simplexNoiseEntry, _random);
         }
 
         public void Generate()

@@ -9,10 +9,8 @@ namespace MonsterAdventure
         public Vector2 mapSize; // number of tile
         public Vector2 tileSize;
 
-        public int largestFeature;
-        public double persistence;
-
         public Map mapPrefab;
+        public SimplexNoiseEntry simplexNoiseEntry;
         public RandomGenerator random;
 
         private Map _map;
@@ -20,7 +18,7 @@ namespace MonsterAdventure
         public Map Construct()
         {
             _map = InstaciateMap();
-            _map.Construct(mapSize, tileSize, largestFeature, persistence, random);
+            _map.Construct(mapSize, tileSize, simplexNoiseEntry, random);
 
             return _map;
         }

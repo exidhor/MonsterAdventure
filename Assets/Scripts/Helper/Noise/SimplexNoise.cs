@@ -12,18 +12,17 @@ namespace MonsterAdventure
         double[] frequencys;
         double[] amplitudes;
 
-        int largestFeature;
-        double persistence;
+        //int largestFeature;
+        SimplexNoiseEntry config;
         private RandomGenerator rand;
 
-        public SimplexNoise(int largestFeature, double persistence, RandomGenerator random)
+        public SimplexNoise(SimplexNoiseEntry config, RandomGenerator random)
         {
-            this.largestFeature = largestFeature;
-            this.persistence = persistence;
+            this.config = config;
             rand = random;
 
             //recieves a number (eg 128) and calculates what power of 2 it is (eg 2^7)
-            int numberOfOctaves = (int)Math.Ceiling(Math.Log10(largestFeature) / Math.Log10(2));
+            int numberOfOctaves = (int)Math.Ceiling(Math.Log10(config.largestFeature) / Math.Log10(2));
 
             octaves = new SimplexNoise_octave[numberOfOctaves];
             frequencys = new double[numberOfOctaves];
@@ -33,8 +32,10 @@ namespace MonsterAdventure
             {
                 octaves[i] = new SimplexNoise_octave(rand);
 
-                frequencys[i] = Math.Pow(2, i);
-                amplitudes[i] = Math.Pow(persistence, octaves.Length - i);
+                //frequencys[i] = Math.Pow(2, i);
+                //amplitudes[i] = Math.Pow(persistence, octaves.Length - i);
+                frequencys[i] = Math.Pow(config.zoomAcceleration, i*config.zoom - config.frequency);
+                amplitudes[i] = Math.Pow(config.WhiteDetails, octaves.Length - i * config.contrast - config.colorOffset);
             }
 
         }
@@ -66,7 +67,7 @@ namespace MonsterAdventure
             for (int i = 0; i < octaves.Length; i++)
             {
                 double frequency = Math.Pow(2, i);
-                double amplitude = Math.Pow(persistence, octaves.Length - i);
+                double amplitude = Math.Pow(config.WhiteDetails, octaves.Length - i);
 
                 result = result + octaves[i].noise(x / frequency, y / frequency, z / frequency) * amplitude;
             }
