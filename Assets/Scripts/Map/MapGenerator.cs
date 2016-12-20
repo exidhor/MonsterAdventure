@@ -6,11 +6,13 @@ namespace MonsterAdventure
 {
     public class MapGenerator : MonoBehaviour
     {
-        public Vector2 mapSize; // number of tile
-        public Vector2 tileSize;
+        public int mapSize; // number of tile
+        public int tileSize;
 
         public Map mapPrefab;
-        public SimplexNoiseEntry simplexNoiseEntry;
+
+        public NoiseGenerator noiseGenerator;
+        //public SimplexNoiseEntry simplexNoiseEntry;
         public RandomGenerator random;
 
         private Map _map;
@@ -18,7 +20,8 @@ namespace MonsterAdventure
         public Map Construct()
         {
             _map = InstaciateMap();
-            _map.Construct(mapSize, tileSize, simplexNoiseEntry, random);
+            noiseGenerator.Construct();
+            _map.Construct(mapSize, tileSize, random, noiseGenerator);
 
             return _map;
         }

@@ -51,14 +51,23 @@ namespace MonsterAdventure
 
             _pseudoRandom = ConstructPseudoRandom(seed);
 
-            print("Random number generator done");
+            print("Random number generator done with seed :" + seed);
+        }
+
+        public void Construct(int seed)
+        {
+            this.seed = seed;
+
+            _pseudoRandom = ConstructPseudoRandom(seed);
+
+            print("Random number generator done with seed : " + seed);
         }
 
         /*!
          * \brief Generate a new seed using the current time 
          * \return seed 
          */
-        private int GenerateRandomSeed()
+        public static int GenerateRandomSeed()
         {
             DateTime currentTime = DateTime.Now;
             return currentTime.Ticks.ToString().GetHashCode();

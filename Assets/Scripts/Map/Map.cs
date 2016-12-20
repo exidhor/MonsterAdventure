@@ -12,11 +12,11 @@ namespace MonsterAdventure
 
         private Background _background;
         private Rect _limits;
-        private SimplexNoise _noise;
         private RandomGenerator _random;
+        private NoiseGenerator _noise;
 
-        public void Construct(Vector2 mapSize, Vector2 tileSize,
-            SimplexNoiseEntry simplexNoiseEntry, RandomGenerator random)
+        public void Construct(int mapSize, int tileSize, RandomGenerator random,
+            NoiseGenerator noise)
         {
             _random = random;
 
@@ -24,11 +24,15 @@ namespace MonsterAdventure
 
             InitSize(mapSize, tileSize);
 
-            _noise = new SimplexNoise(simplexNoiseEntry, _random);
+            _noise = noise;
+
+            //_noise = new SimplexNoise(simplexNoiseEntry, _random);
         }
 
         public void Generate()
         {
+            _noise.Generate((int)_limits.width, transform, _random);
+
             ApplyNoise();
 
             GenerateBiomes();
@@ -44,24 +48,29 @@ namespace MonsterAdventure
             return background;
         }
 
-        private void InitSize(Vector2 mapSize, Vector2 tileSize)
+        private void InitSize(int mapSize, int tileSize)
         {
-            _limits = new Rect(new Vector2(), mapSize);
+            Vector2 size;
+            size.x = mapSize;
+            size.y = mapSize;
+
+            _limits = new Rect(new Vector2(), size);
 
             _background.Construct(mapSize, tileSize);
         }
 
         private void ApplyNoise()
         {
-            for (uint i = 0; i < _background.GetLength(0); i++)
+            for (int i = 0; i < _background.GetLength(0); i++)
             {
-                for (uint j = 0; j < _background.GetLength(1); j++)
+                for (int j = 0; j < _background.GetLength(1); j++)
                 {
-                    float grayscale = (float)_noise.GetNoise((int)i, (int)j);
+                    float sample = _noise.Get(i, j);
 
-                    Color color = new Color(grayscale, grayscale, grayscale, 1);
+                    //Color color = _noise.coloring.Evaluate(sample);
 
-                    _background.Get(i, j).GetComponent<SpriteRenderer>().color = color;
+                    //_background.Get(i, j).GetComponent<SpriteRenderer>().color = color;
+                    _background.AssignBiome(i, j, sample);
                 }
             }
         }
