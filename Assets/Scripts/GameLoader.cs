@@ -19,8 +19,6 @@ namespace MonsterAdventure
             map.Construct();
 
             map.Generate();
-
-            //game.SetMap(map);
         }
     }
 }

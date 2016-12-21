@@ -8,21 +8,34 @@ namespace MonsterAdventure
 {
     public class BiomeManager : MonoBehaviour
     {
+        public Biome biomePrefab; 
+
         public NoiseGenerator noiseGenerator;
         public MapConfig MapConfig;
 
-        private Dictionary<BiomeType, List<Tile>> _tilesPerBiome;
+        private Dictionary<BiomeType, Biome> _biomes;
 
         public void Construct()
         {
-            _tilesPerBiome = new Dictionary<BiomeType, List<Tile>>();
+            _biomes = new Dictionary<BiomeType, Biome>();
 
             foreach (BiomeType biomeType in Enum.GetValues(typeof(BiomeType)))
             {
-                _tilesPerBiome.Add(biomeType, new List<Tile>());
+                Biome biome = InstantiateBiome(biomeType);
+
+                _biomes.Add(biomeType, biome);
             }
 
             noiseGenerator.Construct();
+        }
+
+        private Biome InstantiateBiome(BiomeType type)
+        {
+            Biome biome = Instantiate<Biome>(biomePrefab);
+            biome.transform.parent = gameObject.transform;
+            biome.name = type.ToString();
+
+            return biome;
         }
 
         public void Generate(List<List<Tile>> tiles, int mapSize, RandomGenerator random)
@@ -70,7 +83,7 @@ namespace MonsterAdventure
                     }
                     else
                     {
-                        _tilesPerBiome[type].Add(currentTile);
+                        _biomes[type].Add(currentTile);
                     }
                 }
             }
