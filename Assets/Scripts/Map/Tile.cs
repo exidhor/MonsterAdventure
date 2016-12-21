@@ -9,12 +9,12 @@ namespace MonsterAdventure
     public class Tile : MonoBehaviour
     {
         private BiomeType _biomeType;
-        private Biome _biome;
+        private Zone _zone;
 
         private void Awake()
         {
             _biomeType = BiomeType.None;
-            _biome = null;
+            _zone = null;
         }
 
         public void SetBiomeType(BiomeType biomeType)
@@ -22,9 +22,9 @@ namespace MonsterAdventure
             _biomeType = biomeType;
         }
 
-        public void SetBiome(Biome biome)
+        public void SetZone(Zone zone)
         {
-            _biome = biome;
+            _zone = zone;
         }
 
         public BiomeType GetBiomeType()
@@ -32,9 +32,9 @@ namespace MonsterAdventure
             return _biomeType;
         }
 
-        public Biome GetBiome()
+        public Zone GetZone()
         {
-            return _biome;
+            return _zone;
         }
     }
 }

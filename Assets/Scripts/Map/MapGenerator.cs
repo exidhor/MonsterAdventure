@@ -14,7 +14,7 @@ namespace MonsterAdventure
         public NoiseGenerator noiseGenerator;
         public RandomGenerator random;
         public VoronoiGenerator voronoi;
-        public BiomeConfig biomeConfig;
+        public MapConfig MapConfig;
 
         private Map _map;
 
@@ -28,7 +28,7 @@ namespace MonsterAdventure
 
             voronoi.Construct(bounds, random);
 
-            _map.Construct(bounds, tileSize, random, noiseGenerator, voronoi, biomeConfig);
+            //_map.Construct(bounds, tileSize, random, noiseGenerator, voronoi, biomeConfig);
 
             return _map;
         }

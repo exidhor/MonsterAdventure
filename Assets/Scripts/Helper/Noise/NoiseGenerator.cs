@@ -27,7 +27,7 @@ namespace MonsterAdventure
 
         public NoiseMethodType type;
 
-        public Gradient coloring;
+        //public Gradient coloring;
 
         private Noise _noise;
 

@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace MonsterAdventure
 {
-    public class BiomeConfig : MonoBehaviour
+    public class MapConfig : MonoBehaviour
     {
         public Color blueColor;
         public Texture blueIcon;

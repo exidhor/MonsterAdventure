@@ -17,7 +17,6 @@ namespace MonsterAdventure
         [Range(0, 5)]
         public uint numberOfIterations;
 
-        [HideInInspector]
         public Voronoi voronoi;
 
         // Parameters which don't change
@@ -64,8 +63,8 @@ namespace MonsterAdventure
 
             for (int i = 0; i < numberOfCellulas; i++)
             {
-                int x = _random.Next((int)_bounds.left, (int)_bounds.width);
-                int y = _random.Next((int)_bounds.top, (int)_bounds.height);
+                int x = _random.Next((int)_bounds.left, (int)_bounds.left + (int)_bounds.width);
+                int y = _random.Next((int)_bounds.top, (int)_bounds.top + (int)_bounds.height);
 
                 points.Add(new Vector2(x, y));
             }

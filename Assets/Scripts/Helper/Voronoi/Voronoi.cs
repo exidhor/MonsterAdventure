@@ -12,7 +12,7 @@ namespace MonsterAdventure
      * \brief   Manage the voronoi contruction and the
      *          graphs generations.
      */
-     [Serializable]
+    [Serializable]
     public class Voronoi
     {
         public List<LineSegment> graph;

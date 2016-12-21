@@ -10,79 +10,83 @@ namespace MonsterAdventure
 {
     public class Map : MonoBehaviour
     {
-        public Background backgroundPrefab;
+        // params
+        public uint mapSize;
+        public uint tileSize;
 
-        private Background _background;
+        // global config
         private Rect _bounds;
-        private RandomGenerator _random;
-        private NoiseGenerator _noise;
-        private VoronoiGenerator _voronoi;
-        private BiomeConfig _biomeConfig;
-        private Dictionary<BiomeType, List<Region>> _bases;
+        public MapConfig MapConfig;
 
-        public void Construct(Rect bounds, int tileSize, RandomGenerator random,
-            NoiseGenerator noise, VoronoiGenerator voronoi, BiomeConfig biomeConfig)
+        // utils generators
+        public RandomGenerator random;
+        //public NoiseGenerator noise;
+        //public VoronoiGenerator voronoi; currently useless
+
+        // content managers
+        public TileManager tileManager;
+        public ZoneManager zoneManager;
+        public BiomeManager biomeManager;
+        public BaseManager baseManager;
+
+        //private Dictionary<BiomeType, List<Region>> _bases;
+
+        private void Awake()
         {
-            _random = random;
-            _voronoi = voronoi;
-            _noise = noise;
-            _biomeConfig = biomeConfig;
+            //_bases = new Dictionary<BiomeType, List<Region>>();
+        }
 
-            _bases = new Dictionary<BiomeType, List<Region>>();
-
-            _background = InstanciateBackground();
-
-            InitSize(bounds, tileSize);
+        public void Construct()
+        {
+            tileManager.Construct((int)mapSize, (int)tileSize);
+            zoneManager.Construct();
+            biomeManager.Construct();
+            baseManager.Construct();
         }
 
         public void Generate()
         {
-            _noise.Generate((int)_bounds.width, transform, _random);
+            // We generate the biomes
+            biomeManager.Generate(tileManager.GetTiles(), (int)mapSize, random);
 
-            ApplyNoise();
-            FinalizeBiomes();
+            // then generate zones
+            zoneManager.Generate(tileManager.GetTiles());
 
-            //GenerateBiomes();
-            //GenerateDecorObstacles();
+            // then generate bases
+            // todo
         }
 
-        private Background InstanciateBackground()
-        {
-            Background background = Instantiate<Background>(backgroundPrefab);
-            background.name = "Background";
-            background.transform.parent = gameObject.transform;
-
-            return background;
-        }
-
-        private void InitSize(Rect bounds, int tileSize)
-        {
-            _bounds = bounds;
-
-            _background.Construct((int)_bounds.width, tileSize, _biomeConfig);
-        }
-
+        /*
         private void ApplyNoise()
         {
-            for (int i = 0; i < _background.GetLength(0); i++)
+            for (int i = 0; i < tileManager.GetLength(0); i++)
             {
-                for (int j = 0; j < _background.GetLength(1); j++)
+                for (int j = 0; j < tileManager.GetLength(1); j++)
                 {
-                    float sample = _noise.Get(i, j);
+                    float sample = noise.Get(i, j);
+                    BiomeType type = biomeConfig.GetBiomeType(sample);
+                    Tile tile = tileManager.Get(i, j);
 
-                    _background.AssignBiome(i, j, sample);
+                    AssignBiomeTypeToTile(tile, type);
                 }
             }
         }
 
+        private void AssignBiomeTypeToTile(Tile tile, BiomeType type)
+        {
+            tile.SetBiomeType(type);
+            tile.GetComponent<SpriteRenderer>().color = biomeConfig.GetColor(tile.GetBiomeType());
+        }*/
+
+        /*
         private void FinalizeBiomes()
         {
             List<Region> regions = new List<Region>();
 
             // construct regions from voronoi cellulas
-            for (int i = 0; i < _voronoi.voronoi.regions.Count; i++)
+            for (int i = 0; i < voronoi.voronoi.regions.Count; i++)
             {
-                Region region = new Region(MathHelper.GetGlobalBounds(_voronoi.voronoi.regions[i]));
+                Region region = new Region(MathHelper.GetGlobalBounds(voronoi.voronoi.regions[i]));
                 regions.Add(region);
             }
 
@@ -143,9 +147,9 @@ namespace MonsterAdventure
                 if (biomeType == BiomeType.None)
                     continue;
 
-                while (finalBases[biomeType].Count > _biomeConfig.GetNumberOfBase(biomeType))
+                while (finalBases[biomeType].Count > biomeConfig.GetNumberOfBase(biomeType))
                 {
-                    int randomIndex = _random.Next(finalBases[biomeType].Count - 1);
+                    int randomIndex = random.Next(finalBases[biomeType].Count - 1);
                     
                     finalBases[biomeType].RemoveAt(randomIndex);
                 }
@@ -180,7 +184,7 @@ namespace MonsterAdventure
                 if(biomeType == BiomeType.None)
                     continue;
 
-                uint neededNumber = _biomeConfig.GetNumberOfBase(BiomeType.Black) - (uint)finalBases[biomeType].Count;
+                uint neededNumber = biomeConfig.GetNumberOfBase(BiomeType.Black) - (uint)finalBases[biomeType].Count;
 
                 if (neededNumber > 0)
                 {
@@ -215,7 +219,7 @@ namespace MonsterAdventure
                 {
                     if (availableRegions[currentType].Count > 0)
                     {
-                        int randomIndex = _random.Next(availableRegions[currentType].Count - 1);
+                        int randomIndex = random.Next(availableRegions[currentType].Count - 1);
                         Region region = availableRegions[currentType][randomIndex];
                         finalBases[currentType].Add(region);
                         
@@ -239,7 +243,7 @@ namespace MonsterAdventure
             }
 
             _bases = new Dictionary<BiomeType, List<Region>>(finalBases);
-        }
+        }*/
 
         private List<Tile> GetTileIn(Region region)
         {
@@ -249,18 +253,19 @@ namespace MonsterAdventure
             {
                 for (int j = region.bot - (int)_bounds.y; j < region.top - _bounds.y; j++)
                 {
-                    tiles.Add(_background.Get(i, j));
+                    tiles.Add(tileManager.Get(i, j));
                 }
             }
 
             return tiles;
         }
 
+        /*
         public List<LineSegment> GetSegments()
         {
-            return _voronoi.voronoi.graph;
-        }
-
+            return voronoi.voronoi.graph;
+        }*/
+        /*
         public Dictionary<BiomeType, List<Region>> GetBases()
         {
             return _bases;
@@ -270,7 +275,7 @@ namespace MonsterAdventure
         {
             foreach (BiomeType biomeType in _bases.Keys)
             {
-                Texture icon = _biomeConfig.GetIcon(biomeType);
+                Texture icon = biomeConfig.GetIcon(biomeType);
                 //Vector2 iconSize  = new Vector2(icon.width, icon.height);
                 Vector2 iconSize = new Vector2(5, 5);
 
@@ -284,6 +289,6 @@ namespace MonsterAdventure
                     Gizmos.DrawGUITexture(canvas, icon);
                 }
             }
-        }
+        }*/
     }
 }

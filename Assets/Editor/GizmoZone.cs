@@ -4,13 +4,13 @@ using UnityEngine;
 
 namespace MonsterAdventure.Editor
 {
-    public class GizmoBiome
+    public class GizmoZone
     {
 
         [DrawGizmo(GizmoType.Selected | GizmoType.Active)]
-        static void DrawGizmoForMyScript(Biome biome, GizmoType gizmoType)
+        static void DrawGizmoForMyScript(Zone zone, GizmoType gizmoType)
         {
-            biome.DisplayCubes();
+            zone.DisplayCubes();
         }
 
     }

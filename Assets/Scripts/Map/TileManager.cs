@@ -4,29 +4,30 @@ using UnityEngine;
 
 namespace MonsterAdventure
 {
-    public class Background : MonoBehaviour
+    public class TileManager : MonoBehaviour
     {
         public Tile[] tilePrefabs;
-        public Biome biomePrefab;
+        //public Zone ZonePrefab;
+        public ZoneManager zoneManager;
 
         private List<List<Tile>> _tiles;
-        private BiomeConfig _biomeConfig;
-        private List<Biome> _biomes;
+        private MapConfig _mapConfig;
+        //private List<Zone> _biomes;
 
-        private GameObject _biomeGroup;
-        private GameObject _tileGroup; 
+        //private GameObject _biomeGroup;
+        //private GameObject _tileGroup; 
 
-        public void Construct(int size, int tileSize, BiomeConfig biomeConfig)
+        public void Construct(int size, int tileSize)
         {
-            _biomeConfig = biomeConfig;
+            //_biomeConfig = biomeConfig;
 
-            _biomeGroup = new GameObject();
-            _biomeGroup.name = "Biomes";
-            _biomeGroup.transform.parent = gameObject.transform;
+            //_biomeGroup = new GameObject();
+            //_biomeGroup.name = "Biomes";
+            //_biomeGroup.transform.parent = gameObject.transform;
 
-            _tileGroup = new GameObject();
-            _tileGroup.name = "Tiles";
-            _tileGroup.transform.parent = gameObject.transform;
+            //_tileGroup = new GameObject();
+            //_tileGroup.name = "Tiles";
+            //_tileGroup.transform.parent = gameObject.transform;
 
             Vector2 mapSize;
             mapSize.x = size;
@@ -34,7 +35,7 @@ namespace MonsterAdventure
 
             _tiles = new List<List<Tile>>();
 
-            _biomes = new List<Biome>();
+            //_biomes = new List<Zone>();
 
             Vector2 offset = (mapSize - new Vector2(1, 1)) / 2;
 
@@ -44,6 +45,11 @@ namespace MonsterAdventure
 
                 for (int j = 0; j < mapSize.y; j++)
                 {
+                    if (tilePrefabs.Length == 0)
+                    {
+                        Debug.LogError("No tilePrefabs set");
+                    }
+
                     Tile prefab = tilePrefabs[0];
 
                     _tiles[i].Add(InstantiateTile(prefab, i, j));
@@ -78,21 +84,22 @@ namespace MonsterAdventure
         private Tile InstantiateTile(Tile prefab, int x, int y)
         {
             Tile tile = Instantiate<Tile>(prefab);
-            tile.transform.parent = _tileGroup.transform;
+            tile.transform.parent = gameObject.transform;
             tile.name = prefab.name + " (" + x + ", " + y + ")";
 
             return tile;
         }
 
-        private Biome InstantiateBiome(Biome prefab, BiomeType biomeType)
+        /*private Zone InstantiateBiome(Zone prefab, BiomeType biomeType)
         {
-            Biome biome = Instantiate<Biome>(prefab);
-            biome.transform.parent = _biomeGroup.transform;
-            biome.name = biomeType.ToString();
+            Zone zone = Instantiate<Zone>(prefab);
+            zone.transform.parent = _biomeGroup.transform;
+            zone.name = biomeType.ToString();
 
-            return biome;
-        }
+            return zone;
+        }*/
 
+        /*
         public void AssignBiome(int x, int y, float noiseValue)
         {
             BiomeType biomeType = _biomeConfig.GetBiomeType(noiseValue);
@@ -101,11 +108,12 @@ namespace MonsterAdventure
 
             tile.SetBiomeType(biomeType);
 
-            FillBiome(x, y, biomeType);
+            //FillBiome(x, y, biomeType);
 
             tile.GetComponent<SpriteRenderer>().color = _biomeConfig.GetColor(tile.GetBiomeType());
-        }
+        }*/
 
+        /*
         private void FillBiome(int x, int y, BiomeType biomeType)
         {
             BiomeType currentType = _tiles[x][y].GetBiomeType();
@@ -115,9 +123,9 @@ namespace MonsterAdventure
             // check for left
             if (x > 0 && currentType == _tiles[x - 1][y].GetBiomeType())
             {
-                Biome biome = _tiles[x - 1][y].GetBiome();
-                _tiles[x][y].SetBiome(biome);
-                biome.Add(_tiles[x][y]);
+                Zone zone = _tiles[x - 1][y].GetZone();
+                _tiles[x][y].SetZone(zone);
+                zone.Add(_tiles[x][y]);
 
                 biomeSet = true;
             }
@@ -125,21 +133,21 @@ namespace MonsterAdventure
             // check for bot
             if (y > 0 && currentType == _tiles[x][y - 1].GetBiomeType())
             {
-                Biome biome = _tiles[x][y - 1].GetBiome();
+                Zone zone = _tiles[x][y - 1].GetZone();
 
                 if (biomeSet)
                 {
-                    if (biome != _tiles[x][y].GetBiome())
+                    if (zone != _tiles[x][y].GetZone())
                     {
-                        _tiles[x][y].GetBiome().Absorb(biome);
-                        _biomes.Remove(biome);
-                        Destroy(biome.gameObject);
+                        _tiles[x][y].GetZone().Absorb(zone);
+                        _biomes.Remove(zone);
+                        Destroy(zone.gameObject);
                     }
                 }
                 else
                 {
-                    _tiles[x][y].SetBiome(biome);
-                    biome.Add(_tiles[x][y]);
+                    _tiles[x][y].SetZone(zone);
+                    zone.Add(_tiles[x][y]);
                 }
 
                 biomeSet = true;
@@ -148,16 +156,37 @@ namespace MonsterAdventure
             if(!biomeSet)
             {
                 // create a new Biome
-                Biome newBiome = InstantiateBiome(biomePrefab, currentType);
-                newBiome.Construct(biomeType);
-                _biomes.Add(newBiome);
+                Zone newZone = InstantiateBiome(ZonePrefab, currentType);
+                newZone.Construct(biomeType);
+                _biomes.Add(newZone);
 
                 // add the tile to the biome
-                newBiome.Add(_tiles[x][y]);
+                newZone.Add(_tiles[x][y]);
 
                 // set the biome to the tile
-                _tiles[x][y].SetBiome(newBiome);
+                _tiles[x][y].SetZone(newZone);
             }
+        }*/
+
+        public List<List<Tile>> GetTiles()
+        {
+            return _tiles;
+        }
+
+        public void GenerateBases()
+        {
+            // todo
+
+            // sort tiles by min distance to another biome type BY biome type
+            // save this sort
+            
+            // copy lists
+            // from biome specs, pull a random value, and remove around this value
+            // repeat this process until the spec i reached or no value is available
+
+            // repeat this process for each biome type
         }
     }
 }
+
+// todo : a biomeManager to manage access from distance and so and so ...

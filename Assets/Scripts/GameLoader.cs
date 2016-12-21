@@ -8,7 +8,7 @@ namespace MonsterAdventure
 {
     public class GameLoader : MonoBehaviour
     {
-        public MapGenerator mapGenerator;
+        public Map map;
         public RandomGenerator random;
         public Game game;
 
@@ -16,7 +16,7 @@ namespace MonsterAdventure
         {
             // construction 
             random.Construct();
-            Map map = mapGenerator.Construct();
+            map.Construct();
 
             map.Generate();
 
