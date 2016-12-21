@@ -24,6 +24,15 @@ namespace MonsterAdventure
             get { return bot + height; }
         }
 
+        public Vector2 center
+        {
+            get
+            {
+                return new Vector2(left + (float)width / 2f,
+                                   bot + (float)height / 2f);
+            }
+        }
+
         private List<BiomeType> _biomeTypes;
 
         public static explicit operator Rect(Region region)

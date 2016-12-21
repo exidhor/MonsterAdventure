@@ -31,7 +31,7 @@ namespace MonsterAdventure
             _tiles = new List<Tile>();
             _type = type;
         }
-
+        /*
         public static BiomeType GetBiomeType(float value)
         {
             if (value < 0.25)
@@ -93,7 +93,7 @@ namespace MonsterAdventure
                     Debug.Log("TypeBiome not set in the call \"GetNumberOfBase\"");
                     return 0; // grey
             }
-        }
+        }*/
 
         public void Add(Tile tile)
         {

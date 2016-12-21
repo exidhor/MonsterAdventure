@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using Delaunay.Geo;
 using UnityEngine;
@@ -16,13 +17,18 @@ namespace MonsterAdventure
         private RandomGenerator _random;
         private NoiseGenerator _noise;
         private VoronoiGenerator _voronoi;
+        private BiomeConfig _biomeConfig;
+        private Dictionary<BiomeType, List<Region>> _bases;
 
         public void Construct(Rect bounds, int tileSize, RandomGenerator random,
-            NoiseGenerator noise, VoronoiGenerator voronoi)
+            NoiseGenerator noise, VoronoiGenerator voronoi, BiomeConfig biomeConfig)
         {
             _random = random;
             _voronoi = voronoi;
             _noise = noise;
+            _biomeConfig = biomeConfig;
+
+            _bases = new Dictionary<BiomeType, List<Region>>();
 
             _background = InstanciateBackground();
 
@@ -34,6 +40,7 @@ namespace MonsterAdventure
             _noise.Generate((int)_bounds.width, transform, _random);
 
             ApplyNoise();
+            FinalizeBiomes();
 
             //GenerateBiomes();
             //GenerateDecorObstacles();
@@ -52,7 +59,7 @@ namespace MonsterAdventure
         {
             _bounds = bounds;
 
-            _background.Construct((int)_bounds.width, tileSize);
+            _background.Construct((int)_bounds.width, tileSize, _biomeConfig);
         }
 
         private void ApplyNoise()
@@ -98,7 +105,7 @@ namespace MonsterAdventure
 
             foreach (Region region in regions)
             {
-                if (region.GetBiomeTypeCount() > 1)
+                if (region.GetBiomeTypeCount() == 1)
                 {
                     oneBiomeTypeRegions.Add(region);
                 }
@@ -117,6 +124,9 @@ namespace MonsterAdventure
 
             foreach (BiomeType biomeType in Enum.GetValues(typeof(BiomeType)))
             {
+                if (biomeType == BiomeType.None)
+                    continue;
+
                 finalBases.Add(biomeType, new List<Region>());
                 availableRegions.Add(biomeType, new List<Region>());
             }
@@ -130,7 +140,10 @@ namespace MonsterAdventure
             // verification of the number of regions
             foreach (BiomeType biomeType in finalBases.Keys)
             {
-                while (finalBases[biomeType].Count > Biome.GetNumberOfBase(biomeType))
+                if (biomeType == BiomeType.None)
+                    continue;
+
+                while (finalBases[biomeType].Count > _biomeConfig.GetNumberOfBase(biomeType))
                 {
                     int randomIndex = _random.Next(finalBases[biomeType].Count - 1);
                     
@@ -146,6 +159,9 @@ namespace MonsterAdventure
             {
                 foreach (BiomeType type in availableRegions.Keys)
                 {
+                    if (type == BiomeType.None)
+                        continue;
+
                     if (region.HasBiomeType(type))
                     {
                         availableRegions[type].Add(region);
@@ -161,7 +177,10 @@ namespace MonsterAdventure
 
             foreach (BiomeType biomeType in Enum.GetValues(typeof(BiomeType)))
             {
-                uint neededNumber = Biome.GetNumberOfBase(BiomeType.Black) - (uint)finalBases[biomeType].Count;
+                if(biomeType == BiomeType.None)
+                    continue;
+
+                uint neededNumber = _biomeConfig.GetNumberOfBase(BiomeType.Black) - (uint)finalBases[biomeType].Count;
 
                 if (neededNumber > 0)
                 {
@@ -178,6 +197,9 @@ namespace MonsterAdventure
 
                 foreach (BiomeType type in numberOfRegionsNeeded.Keys)
                 {
+                    if (type == BiomeType.None)
+                        continue;
+
                     if (biggestNumberBaseMissing < numberOfRegionsNeeded[type])
                     {
                         biggestNumberBaseMissing = numberOfRegionsNeeded[type];
@@ -194,9 +216,16 @@ namespace MonsterAdventure
                     if (availableRegions[currentType].Count > 0)
                     {
                         int randomIndex = _random.Next(availableRegions[currentType].Count - 1);
-                        finalBases[currentType].Add(availableRegions[currentType][randomIndex]);
-                        // todo : find how to be sure that a region is not in multiple type of list
+                        Region region = availableRegions[currentType][randomIndex];
+                        finalBases[currentType].Add(region);
+                        
                         currentNumberBaseMissing--;
+
+                        // remove the region
+                        foreach (BiomeType type in availableRegions.Keys)
+                        {
+                            availableRegions[type].Remove(region);
+                        }
                     }
                     else
                     {
@@ -209,16 +238,16 @@ namespace MonsterAdventure
                 numberOfRegionsNeeded.Remove(currentType);
             }
 
-            // todo : Construct base from the final list
+            _bases = new Dictionary<BiomeType, List<Region>>(finalBases);
         }
 
         private List<Tile> GetTileIn(Region region)
         {
             List<Tile> tiles = new List<Tile>();
 
-            for (int i = region.left; i < region.right; i++)
+            for (int i = region.left - (int)_bounds.x; i < region.right - _bounds.x; i++)
             {
-                for (int j = region.bot; j < region.top; j++)
+                for (int j = region.bot - (int)_bounds.y; j < region.top - _bounds.y; j++)
                 {
                     tiles.Add(_background.Get(i, j));
                 }
@@ -230,6 +259,31 @@ namespace MonsterAdventure
         public List<LineSegment> GetSegments()
         {
             return _voronoi.voronoi.graph;
+        }
+
+        public Dictionary<BiomeType, List<Region>> GetBases()
+        {
+            return _bases;
+        }
+
+        public void DrawIconsForBases()
+        {
+            foreach (BiomeType biomeType in _bases.Keys)
+            {
+                Texture icon = _biomeConfig.GetIcon(biomeType);
+                //Vector2 iconSize  = new Vector2(icon.width, icon.height);
+                Vector2 iconSize = new Vector2(5, 5);
+
+                foreach (Region region in _bases[biomeType])
+                {
+                    Vector2 position = region.center;
+                    position -= iconSize/2;
+
+                    Rect canvas = new Rect(position, iconSize);
+
+                    Gizmos.DrawGUITexture(canvas, icon);
+                }
+            }
         }
     }
 }

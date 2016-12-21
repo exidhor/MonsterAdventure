@@ -10,14 +10,16 @@ namespace MonsterAdventure
         public Biome biomePrefab;
 
         private List<List<Tile>> _tiles;
-
+        private BiomeConfig _biomeConfig;
         private List<Biome> _biomes;
 
         private GameObject _biomeGroup;
         private GameObject _tileGroup; 
 
-        public void Construct(int size, int tileSize)
+        public void Construct(int size, int tileSize, BiomeConfig biomeConfig)
         {
+            _biomeConfig = biomeConfig;
+
             _biomeGroup = new GameObject();
             _biomeGroup.name = "Biomes";
             _biomeGroup.transform.parent = gameObject.transform;
@@ -56,7 +58,13 @@ namespace MonsterAdventure
 
         public Tile Get(int x, int y)
         {
-            return _tiles[(int)x][(int)y];
+            if (0 <= x && x < _tiles.Count
+                && 0 <= y && y < _tiles[0].Count)
+            {
+                return _tiles[(int)x][(int)y];
+            }
+
+            return null;
         }
 
         public uint GetLength(uint index)
@@ -87,7 +95,7 @@ namespace MonsterAdventure
 
         public void AssignBiome(int x, int y, float noiseValue)
         {
-            BiomeType biomeType = Biome.GetBiomeType(noiseValue);
+            BiomeType biomeType = _biomeConfig.GetBiomeType(noiseValue);
     
             Tile tile = _tiles[x][y];
 
@@ -95,7 +103,7 @@ namespace MonsterAdventure
 
             FillBiome(x, y, biomeType);
 
-            tile.GetComponent<SpriteRenderer>().color = tile.GetBiome().GetColor();
+            tile.GetComponent<SpriteRenderer>().color = _biomeConfig.GetColor(tile.GetBiomeType());
         }
 
         private void FillBiome(int x, int y, BiomeType biomeType)

@@ -17,6 +17,7 @@ namespace MonsterAdventure
         [Range(0, 5)]
         public uint numberOfIterations;
 
+        [HideInInspector]
         public Voronoi voronoi;
 
         // Parameters which don't change

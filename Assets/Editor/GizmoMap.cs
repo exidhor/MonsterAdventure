@@ -8,7 +8,7 @@ namespace MonsterAdventure.Editor
     public class GizmoMap
     {
         [DrawGizmo(GizmoType.Selected | GizmoType.Active)]
-        static void DrawGizmoForMyScript(Map map, GizmoType gizmoType)
+        static void DrawGizmoForVoronoi(Map map, GizmoType gizmoType)
         {
             Gizmos.color = new Color(0.5f,0.5f,0.5f,0.8f);
 
@@ -20,6 +20,12 @@ namespace MonsterAdventure.Editor
                 Vector3 secondPoint = new Vector2(line.p1.Value.x, line.p1.Value.y);
                 Gizmos.DrawLine(firstPoint, secondPoint);
             }
+        }
+
+        [DrawGizmo(GizmoType.Selected | GizmoType.Active)]
+        static void DrawGizmoForBases(Map map, GizmoType gizmoType)
+        {
+            map.DrawIconsForBases();
         }
     }
 }
