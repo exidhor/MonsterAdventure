@@ -12,16 +12,22 @@ namespace MonsterAdventure
         public Map mapPrefab;
 
         public NoiseGenerator noiseGenerator;
-        //public SimplexNoiseEntry simplexNoiseEntry;
         public RandomGenerator random;
+        public VoronoiGenerator voronoi;
 
         private Map _map;
 
         public Map Construct()
         {
             _map = InstaciateMap();
+
             noiseGenerator.Construct();
-            _map.Construct(mapSize, tileSize, random, noiseGenerator);
+
+            Rect bounds = new Rect(-mapSize/2, -mapSize/2, mapSize, mapSize);
+
+            voronoi.Construct(bounds, random);
+
+            _map.Construct(bounds, tileSize, random, noiseGenerator, voronoi);
 
             return _map;
         }

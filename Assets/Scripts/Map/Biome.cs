@@ -39,7 +39,7 @@ namespace MonsterAdventure
                 return BiomeType.Blue;
             }
 
-            if (value < 0.53)
+            if (value < 0.45)
             {
                 return BiomeType.Green;
             }
@@ -70,6 +70,28 @@ namespace MonsterAdventure
 
                 default:
                     return new Color(0.6f, 0.6f, 0.6f); // grey
+            }
+        }
+
+        public static uint GetNumberOfBase(BiomeType type)
+        {
+            switch (type)
+            {
+                case BiomeType.Black:
+                    return 8;
+
+                case BiomeType.Blue:
+                    return 9;
+
+                case BiomeType.Green:
+                    return 15;
+
+                case BiomeType.White:
+                    return 22;
+
+                default:
+                    Debug.Log("TypeBiome not set in the call \"GetNumberOfBase\"");
+                    return 0; // grey
             }
         }
 

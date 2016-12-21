@@ -54,20 +54,6 @@ namespace MonsterAdventure
             }
         }
 
-        private void ConstructBiomes()
-        {
-            _biomes = new List<Biome>();
-
-            for (int i = 0; i < Enum.GetValues(typeof(BiomeType)).Length; i++)
-            {
-                BiomeType biomeType = (BiomeType) i;
-                Biome biome = InstantiateBiome(biomePrefab, biomeType);
-                biome.Construct(biomeType);
-
-                _biomes.Add(biome);
-            }
-        }
-
         public Tile Get(int x, int y)
         {
             return _tiles[(int)x][(int)y];
