@@ -17,15 +17,15 @@ namespace MonsterAdventure
             _zones = new List<Zone>();
         }
 
-        public void Generate(List<List<Tile>> tiles)
+        public void Generate(List<List<Chunk>> chunks)
         {
             _zones.Clear();
 
-            for (int i = 0; i < tiles.Count; i++)
+            for (int i = 0; i < chunks.Count; i++)
             {
-                for (int j = 0; j < tiles[0].Count; j++)
+                for (int j = 0; j < chunks[0].Count; j++)
                 {
-                    FindZone(i, j, tiles);
+                    FindZone(i, j, chunks);
                 }
             }
         }
@@ -39,40 +39,40 @@ namespace MonsterAdventure
             return zone;
         }
 
-        private void FindZone(int x, int y, List<List<Tile>> tiles)
+        private void FindZone(int x, int y, List<List<Chunk>> chunks)
         {
-            BiomeType currentType = tiles[x][y].GetBiomeType();
+            BiomeType currentType = chunks[x][y].GetBiomeType();
 
             bool zoneSet = false;
 
             // check for left
-            if (x > 0 && currentType == tiles[x - 1][y].GetBiomeType())
+            if (x > 0 && currentType == chunks[x - 1][y].GetBiomeType())
             {
-                Zone zone = tiles[x - 1][y].GetZone();
-                tiles[x][y].SetZone(zone);
-                zone.Add(tiles[x][y]);
+                Zone zone = chunks[x - 1][y].GetZone();
+                chunks[x][y].SetZone(zone);
+                zone.Add(chunks[x][y]);
 
                 zoneSet = true;
             }
 
             // check for bot
-            if (y > 0 && currentType == tiles[x][y - 1].GetBiomeType())
+            if (y > 0 && currentType == chunks[x][y - 1].GetBiomeType())
             {
-                Zone zone = tiles[x][y - 1].GetZone();
+                Zone zone = chunks[x][y - 1].GetZone();
 
                 if (zoneSet)
                 {
-                    if (zone != tiles[x][y].GetZone())
+                    if (zone != chunks[x][y].GetZone())
                     {
-                        tiles[x][y].GetZone().Absorb(zone);
+                        chunks[x][y].GetZone().Absorb(zone);
                         _zones.Remove(zone);
                         Destroy(zone.gameObject);
                     }
                 }
                 else
                 {
-                    tiles[x][y].SetZone(zone);
-                    zone.Add(tiles[x][y]);
+                    chunks[x][y].SetZone(zone);
+                    zone.Add(chunks[x][y]);
                 }
 
                 zoneSet = true;
@@ -86,10 +86,10 @@ namespace MonsterAdventure
                 _zones.Add(newZone);
 
                 // add the tile to the zone
-                newZone.Add(tiles[x][y]);
+                newZone.Add(chunks[x][y]);
 
                 // set the zone to the tile
-                tiles[x][y].SetZone(newZone);
+                chunks[x][y].SetZone(newZone);
             }
         }
     }

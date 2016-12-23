@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace MonsterAdventure
 {
-    public class Tile : MonoBehaviour
+    public class Chunk : MonoBehaviour
     {
         private BiomeType _biomeType;
         private Zone _zone;
@@ -70,19 +70,19 @@ namespace MonsterAdventure
             return _distanceToLimit;
         }
 
-        public int GetDistanceFrom(Tile tile)
+        public int GetDistanceFrom(Chunk chunk)
         {
-            int dist_x = Math.Abs(tile._coordsInGrid_x - _coordsInGrid_x);
-            int dist_y = Math.Abs(tile._coordsInGrid_y - _coordsInGrid_y);
+            int dist_x = Math.Abs(chunk._coordsInGrid_x - _coordsInGrid_x);
+            int dist_y = Math.Abs(chunk._coordsInGrid_y - _coordsInGrid_y);
 
             return dist_x + dist_y;
         }
 
-        public static bool BelongToBiomeLimit(Tile tile, List<List<Tile>> tiles)
+        public static bool BelongToBiomeLimit(Chunk chunk, List<List<Chunk>> tiles)
         {
-            BiomeType currentType = tile.GetBiomeType();
-            int current_x = tile._coordsInGrid_x;
-            int current_y = tile._coordsInGrid_y;
+            BiomeType currentType = chunk.GetBiomeType();
+            int current_x = chunk._coordsInGrid_x;
+            int current_y = chunk._coordsInGrid_y;
 
             // check at the left
             if (current_x > 0 

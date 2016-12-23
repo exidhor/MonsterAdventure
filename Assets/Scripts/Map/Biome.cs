@@ -8,109 +8,109 @@ namespace MonsterAdventure
 {
     public class Biome : MonoBehaviour
     {
-        public List<Tile> tiles;
+        public List<Chunk> chunks;
         public BiomeType type;
 
-        private Dictionary<int, List<Tile>> _sortedTiles;
+        private Dictionary<int, List<Chunk>> _sortedChunks;
 
         private void Awake()
         {
-            tiles = new List<Tile>();
-            _sortedTiles = new Dictionary<int, List<Tile>>();
+            chunks = new List<Chunk>();
+            _sortedChunks = new Dictionary<int, List<Chunk>>();
         }
 
-        public void Add(Tile tile)
+        public void Add(Chunk chunk)
         {
-            tiles.Add(tile);
+            chunks.Add(chunk);
         }
 
-        public List<Tile> GetTilesFromMinDistance(int minDistance)
+        public List<Chunk> GetChunksFromMinDistance(int minDistance)
         {
-            List<Tile> foundedTiles = new List<Tile>();
+            List<Chunk> foundedChunks = new List<Chunk>();
 
-            foreach (int distance in _sortedTiles.Keys)
+            foreach (int distance in _sortedChunks.Keys)
             {
                 if (distance >= minDistance)
                 {
-                    foundedTiles.AddRange(_sortedTiles[distance]);
+                    foundedChunks.AddRange(_sortedChunks[distance]);
                 }
             }
 
-            return foundedTiles;
+            return foundedChunks;
         }
 
-        public void Organize(List<List<Tile>> allTiles)
+        public void Organize(List<List<Chunk>> allChunks)
         {
-            List<Tile> toSort = new List<Tile>(tiles);
+            List<Chunk> toSort = new List<Chunk>(chunks);
 
-            // limit tiles (tile near another biome)
-            List<Tile> limitTiles = new List<Tile>();
+            // limit chunks (chunks near another biome)
+            List<Chunk> limitChunks = new List<Chunk>();
 
-            // at the first iteration, we set the tile which are adjacent to
-            // a tile of another biome
+            // at the first iteration, we set the chunk which are adjacent to
+            // a chunk of another biome
             for (int i = 0; i < toSort.Count; i++)
             {
-                if (Tile.BelongToBiomeLimit(toSort[i], allTiles))
+                if (Chunk.BelongToBiomeLimit(toSort[i], allChunks))
                 {
-                    limitTiles.Add(toSort[i]);
+                    limitChunks.Add(toSort[i]);
                     toSort[i].SetDistanceToLimit(0);
                     toSort.RemoveAt(i);
                     i--;
                 }
             }
 
-            // then we check if no limit tile were found
-            if (limitTiles.Count == 0)
+            // then we check if no limit chunk were found
+            if (limitChunks.Count == 0)
             {
-                // we add all the tiles at the max pos
-                _sortedTiles.Add(int.MaxValue, toSort);
+                // we add all the chunks at the max pos
+                _sortedChunks.Add(int.MaxValue, toSort);
 
-                // we actualize the distance to limit in each tile
-                foreach (Tile tile in toSort)
+                // we actualize the distance to limit in each chunk
+                foreach (Chunk chunk in toSort)
                 {
-                    tile.SetDistanceToLimit(int.MaxValue);
+                    chunk.SetDistanceToLimit(int.MaxValue);
                 }
 
                 // we stop the function
                 return;
             }
 
-            //else, we add the limit tiles to the dictionary
-            _sortedTiles.Add(0, limitTiles);
+            //else, we add the limit chunks to the dictionary
+            _sortedChunks.Add(0, limitChunks);
 
             int currentDistanceToLimit = 1;
 
-            // then we iterate until all tiles are sorted
+            // then we iterate until all chunks are sorted
             while (toSort.Count > 0)
             {
-                List<Tile> tilesForCurrentDistance = new List<Tile>();
+                List<Chunk> chunksForCurrentDistance = new List<Chunk>();
 
                 for (int i = 0; i < toSort.Count; i++)
                 {
                     if (IsNearDeterminedDistance(toSort[i].GetX(),
                                                  toSort[i].GetY(),
-                                                 allTiles))
+                                                 allChunks))
                     {
-                        tilesForCurrentDistance.Add(toSort[i]);
+                        chunksForCurrentDistance.Add(toSort[i]);
                         toSort.RemoveAt(i);
                         i--;
                     }
                 }
 
-                if (tilesForCurrentDistance.Count > 0)
+                if (chunksForCurrentDistance.Count > 0)
                 {
-                    // set the distance in the tile
-                    foreach (Tile tile in tilesForCurrentDistance)
+                    // set the distance in the chunk
+                    foreach (Chunk chunk in chunksForCurrentDistance)
                     {
-                        tile.SetDistanceToLimit(currentDistanceToLimit);
+                        chunk.SetDistanceToLimit(currentDistanceToLimit);
                     }
 
                     // create an entry into the dictionary
-                    _sortedTiles.Add(currentDistanceToLimit, tilesForCurrentDistance);
+                    _sortedChunks.Add(currentDistanceToLimit, chunksForCurrentDistance);
                 }
                 else
                 {
-                    Debug.LogError("No tile found during an iteration !");
+                    Debug.LogError("No chunk found during an iteration !");
                 }
                 
                 // actualize the distance
@@ -125,14 +125,14 @@ namespace MonsterAdventure
             //}
         }
 
-        private bool IsNearDeterminedDistance(int x, int y, List<List<Tile>> allTiles)
+        private bool IsNearDeterminedDistance(int x, int y, List<List<Chunk>> allChunks)
         {
             // check at the left
             int currentDistance;
 
             if (x > 0)
             {
-                currentDistance = allTiles[x - 1][y].GetDistanceToLimit();
+                currentDistance = allChunks[x - 1][y].GetDistanceToLimit();
 
                 if (currentDistance != -1)
                 {
@@ -141,9 +141,9 @@ namespace MonsterAdventure
             }
 
             // check top
-            if (allTiles.Count > 0 && y < allTiles[0].Count - 1)
+            if (allChunks.Count > 0 && y < allChunks[0].Count - 1)
             {
-                currentDistance = allTiles[x][y + 1].GetDistanceToLimit();
+                currentDistance = allChunks[x][y + 1].GetDistanceToLimit();
 
                 if (currentDistance != -1)
                 {
@@ -152,9 +152,9 @@ namespace MonsterAdventure
             }
 
             // check right
-            if (x < allTiles.Count - 1)
+            if (x < allChunks.Count - 1)
             {
-                currentDistance = allTiles[x + 1][y].GetDistanceToLimit();
+                currentDistance = allChunks[x + 1][y].GetDistanceToLimit();
 
                 if (currentDistance != -1)
                 {
@@ -165,7 +165,7 @@ namespace MonsterAdventure
             // check bot
             if (y > 0)
             {
-                currentDistance = allTiles[x][y - 1].GetDistanceToLimit();
+                currentDistance = allChunks[x][y - 1].GetDistanceToLimit();
 
                 if (currentDistance != -1)
                 {

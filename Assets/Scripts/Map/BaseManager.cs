@@ -42,17 +42,6 @@ namespace MonsterAdventure
 
         public void Generate()
         {
-            // todo
-
-            // sort tiles by min distance to another biome type BY biome type
-            // save this sort
-
-            // copy lists
-            // from biome specs, pull a random value, and remove around this value
-            // repeat this process until the spec i reached or no value is available
-
-            // repeat this process for each biome type
-
             foreach (BaseType baseType in _basesPerType.Keys)
             {
                 GenerateBases(baseType);
@@ -65,23 +54,23 @@ namespace MonsterAdventure
             uint minDist = GetMinDist(baseType);
             BiomeType biomeType = GetBiomeTypeAccordingTo(baseType);
 
-            List<Tile> foundedTiles = biomeManager.GetTilesFromMinDistance(biomeType, (int)minDist);
+            List<Chunk> foundedChunks = biomeManager.GetChunkFromMinDistance(biomeType, (int)minDist);
 
-            while (numberOfBaseToGenerate > 0 && foundedTiles.Count > 0)
+            while (numberOfBaseToGenerate > 0 && foundedChunks.Count > 0)
             {
-                // find the tile
-                int randomIndex = randomGenerator.Next(foundedTiles.Count - 1);
-                Tile tile = foundedTiles[randomIndex];
+                // find the chunk
+                int randomIndex = randomGenerator.Next(foundedChunks.Count - 1);
+                Chunk chunk = foundedChunks[randomIndex];
 
                 // create the base
                 Base newBase = InstantiateBase(baseType);
-                newBase.Construct(tile.GetX(), tile.GetY());
-                newBase.transform.position = tile.transform.position;
+                newBase.Construct(chunk.GetX(), chunk.GetY());
+                newBase.transform.position = chunk.transform.position;
                 _basesPerType[baseType].Add(newBase);
 
                 // remove the tile and the other at the min dist
-                foundedTiles.RemoveAt(randomIndex);
-                RemoveTiles(ref foundedTiles, tile, (int)minDist);
+                foundedChunks.RemoveAt(randomIndex);
+                RemoveChunks(ref foundedChunks, chunk, (int)minDist);
                 numberOfBaseToGenerate--;
             }
         }
@@ -95,19 +84,16 @@ namespace MonsterAdventure
             return baseResult;
         }
 
-        // todo : faire une classe qui permet de stocker temporairement une liste de tile
-        // en plus de permettre qu'elle detecte les cases adjacentes facilement
-
-        private void RemoveTiles(ref List<Tile> tiles, Tile tile, int dist)
+        private void RemoveChunks(ref List<Chunk> chunks, Chunk chunk, int dist)
         {
-            for (int i = 0; i < tiles.Count; i++)
+            for (int i = 0; i < chunks.Count; i++)
             {
-                Tile currentTile =  tiles[i];
+                Chunk currentChunk =  chunks[i];
 
-                if (currentTile != tile
-                    && currentTile.GetDistanceFrom(tile) < dist)
+                if (currentChunk != chunk
+                    && currentChunk.GetDistanceFrom(chunk) < dist)
                 {
-                    tiles.RemoveAt(i);
+                    chunks.RemoveAt(i);
                     i--;
                 }
             }

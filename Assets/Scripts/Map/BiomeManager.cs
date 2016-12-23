@@ -62,52 +62,52 @@ namespace MonsterAdventure
             return biome;
         }
 
-        public void Generate(List<List<Tile>> tiles, int mapSize, RandomGenerator random)
+        public void Generate(List<List<Chunk>> chunks, int mapSize, RandomGenerator random)
         {
             noiseGenerator.Generate(mapSize, transform, random);
 
-            ApplyNoise(tiles);
+            ApplyNoise(chunks);
 
-            SortPerBiomes(tiles);
+            SortPerBiomes(chunks);
 
-            OrganizeBiomes(tiles);
+            OrganizeBiomes(chunks);
         }
 
-        public List<Tile> GetTilesFromMinDistance(BiomeType biomeType, int minDistance)
+        public List<Chunk> GetChunkFromMinDistance(BiomeType biomeType, int minDistance)
         {
             Biome targetBiome = _biomes[biomeType];
 
-            return targetBiome.GetTilesFromMinDistance(minDistance);
+            return targetBiome.GetChunksFromMinDistance(minDistance);
         }
 
-        private void ApplyNoise(List<List<Tile>> tiles)
+        private void ApplyNoise(List<List<Chunk>> chunks)
         {
-            for (int i = 0; i < tiles.Count; i++)
+            for (int i = 0; i < chunks.Count; i++)
             {
-                for (int j = 0; j < tiles[0].Count; j++)
+                for (int j = 0; j < chunks[0].Count; j++)
                 {
                     float sample = noiseGenerator.Get(i, j);
                     BiomeType type = GetBiomeType(sample);
 
-                    AssignBiomeTypeToTile(tiles[i][j], type);
+                    AssignBiomeTypeToChunk(chunks[i][j], type);
                 }
             }
         }
 
-        private void AssignBiomeTypeToTile(Tile tile, BiomeType type)
+        private void AssignBiomeTypeToChunk(Chunk chunk, BiomeType type)
         {
-            tile.SetBiomeType(type);
-            tile.GetComponent<SpriteRenderer>().color = GetColor(tile.GetBiomeType());
+            chunk.SetBiomeType(type);
+            chunk.GetComponent<SpriteRenderer>().color = GetColor(chunk.GetBiomeType());
         }
 
-        private void SortPerBiomes(List<List<Tile>> tiles)
+        private void SortPerBiomes(List<List<Chunk>> chunks)
         {
-            for (int i = 0; i < tiles.Count; i++)
+            for (int i = 0; i < chunks.Count; i++)
             {
-                for (int j = 0; j < tiles[0].Count; j++)
+                for (int j = 0; j < chunks[0].Count; j++)
                 {
-                    Tile currentTile = tiles[i][j];
-                    BiomeType type = currentTile.GetBiomeType();
+                    Chunk currentChunk = chunks[i][j];
+                    BiomeType type = currentChunk.GetBiomeType();
 
                     if (type == BiomeType.None)
                     {
@@ -116,17 +116,17 @@ namespace MonsterAdventure
                     }
                     else
                     {
-                        _biomes[type].Add(currentTile);
+                        _biomes[type].Add(currentChunk);
                     }
                 }
             }
         }
 
-        private void OrganizeBiomes(List<List<Tile>> tiles)
+        private void OrganizeBiomes(List<List<Chunk>> chunks)
         {
             foreach (Biome biome in _biomes.Values)
             {
-                biome.Organize(tiles);
+                biome.Organize(chunks);
             }
         }
 
