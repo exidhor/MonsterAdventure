@@ -6,15 +6,6 @@ using UnityEngine;
 
 namespace MonsterAdventure
 {
-    public enum BiomeType
-    {
-        None = 0,
-        Green,
-        Black,
-        White,
-        Blue,
-    }
-
     public class Zone : MonoBehaviour
     {
         public BiomeType type;

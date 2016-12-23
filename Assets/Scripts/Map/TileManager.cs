@@ -6,11 +6,12 @@ namespace MonsterAdventure
 {
     public class TileManager : MonoBehaviour
     {
+        public bool drawDistance = true;
+
         public Tile[] tilePrefabs;
         public ZoneManager zoneManager;
 
         private List<List<Tile>> _tiles;
-        private MapConfig _mapConfig;
 
         public void Construct(int size, int tileSize)
         {
@@ -69,6 +70,7 @@ namespace MonsterAdventure
             Tile tile = Instantiate<Tile>(prefab);
             tile.transform.parent = gameObject.transform;
             tile.name = prefab.name + " (" + x + ", " + y + ")";
+            tile.SetPositionInGrid(x, y);
 
             return tile;
         }
@@ -77,21 +79,5 @@ namespace MonsterAdventure
         {
             return _tiles;
         }
-
-        public void GenerateBases()
-        {
-            // todo
-
-            // sort tiles by min distance to another biome type BY biome type
-            // save this sort
-            
-            // copy lists
-            // from biome specs, pull a random value, and remove around this value
-            // repeat this process until the spec i reached or no value is available
-
-            // repeat this process for each biome type
-        }
     }
 }
-
-// todo : a biomeManager to manage access from distance and so and so ...

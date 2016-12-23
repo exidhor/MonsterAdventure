@@ -16,7 +16,6 @@ namespace MonsterAdventure
 
         // global config
         private Rect _bounds;
-        public MapConfig MapConfig;
 
         // utils generators
         public RandomGenerator random;
@@ -49,7 +48,7 @@ namespace MonsterAdventure
             zoneManager.Generate(tileManager.GetTiles());
 
             // then generate bases
-            // todo
+            baseManager.Generate();
         }
 
         private List<Tile> GetTileIn(Region region)

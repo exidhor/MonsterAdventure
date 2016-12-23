@@ -8,21 +8,45 @@ namespace MonsterAdventure
 {
     public class BiomeManager : MonoBehaviour
     {
+        public Color blueColor = Color.blue;
+        public float blueRatio = 0.25f;
+
+        public Color greenColor = Color.green;
+        public float greenRatio = 0.2f;
+
+        public Color whiteColor = Color.white;
+        public float whiteRatio = 0.12f;
+
+        public Color blackColor = Color.black;
+        public float blackRatio = 0.47f;
+
         public Biome biomePrefab; 
 
         public NoiseGenerator noiseGenerator;
-        public MapConfig MapConfig;
+
+        private float blackRatioNormalized;
+        private float blueRatioNormalized;
+        private float greenRatioNormalized;
+        private float whiteRatioNormalized;
 
         private Dictionary<BiomeType, Biome> _biomes;
 
         public void Construct()
         {
+            // normalize the ratio value
+            float sum = blackRatio + blueRatio + greenRatio + whiteRatio;
+
+            blackRatioNormalized = blackRatio / sum;
+            blueRatioNormalized = blueRatio / sum;
+            greenRatioNormalized = greenRatio / sum;
+            whiteRatioNormalized = whiteRatio / sum;
+
             _biomes = new Dictionary<BiomeType, Biome>();
 
             foreach (BiomeType biomeType in Enum.GetValues(typeof(BiomeType)))
             {
                 Biome biome = InstantiateBiome(biomeType);
-
+                biome.type = biomeType;
                 _biomes.Add(biomeType, biome);
             }
 
@@ -45,6 +69,15 @@ namespace MonsterAdventure
             ApplyNoise(tiles);
 
             SortPerBiomes(tiles);
+
+            OrganizeBiomes(tiles);
+        }
+
+        public List<Tile> GetTilesFromMinDistance(BiomeType biomeType, int minDistance)
+        {
+            Biome targetBiome = _biomes[biomeType];
+
+            return targetBiome.GetTilesFromMinDistance(minDistance);
         }
 
         private void ApplyNoise(List<List<Tile>> tiles)
@@ -54,7 +87,7 @@ namespace MonsterAdventure
                 for (int j = 0; j < tiles[0].Count; j++)
                 {
                     float sample = noiseGenerator.Get(i, j);
-                    BiomeType type = MapConfig.GetBiomeType(sample);
+                    BiomeType type = GetBiomeType(sample);
 
                     AssignBiomeTypeToTile(tiles[i][j], type);
                 }
@@ -64,7 +97,7 @@ namespace MonsterAdventure
         private void AssignBiomeTypeToTile(Tile tile, BiomeType type)
         {
             tile.SetBiomeType(type);
-            tile.GetComponent<SpriteRenderer>().color = MapConfig.GetColor(tile.GetBiomeType());
+            tile.GetComponent<SpriteRenderer>().color = GetColor(tile.GetBiomeType());
         }
 
         private void SortPerBiomes(List<List<Tile>> tiles)
@@ -87,6 +120,61 @@ namespace MonsterAdventure
                     }
                 }
             }
+        }
+
+        private void OrganizeBiomes(List<List<Tile>> tiles)
+        {
+            foreach (Biome biome in _biomes.Values)
+            {
+                biome.Organize(tiles);
+            }
+        }
+
+        public Color GetColor(BiomeType type)
+        {
+            switch (type)
+            {
+                case BiomeType.Black:
+                    return blackColor;
+
+                case BiomeType.Blue:
+                    return blueColor;
+
+                case BiomeType.Green:
+                    return greenColor;
+
+                case BiomeType.White:
+                    return whiteColor;
+
+                default:
+                    return new Color(0.6f, 0.6f, 0.6f, 1f); // grey by default
+            }
+        }
+
+        public BiomeType GetBiomeType(float value)
+        {
+            float ratio = blueRatioNormalized;
+
+            if (value < ratio)
+            {
+                return BiomeType.Blue;
+            }
+
+            ratio += greenRatioNormalized;
+
+            if (value < ratio)
+            {
+                return BiomeType.Green;
+            }
+
+            ratio += whiteRatioNormalized;
+
+            if (value < ratio)
+            {
+                return BiomeType.White;
+            }
+
+            return BiomeType.Black;
         }
     }
 }
