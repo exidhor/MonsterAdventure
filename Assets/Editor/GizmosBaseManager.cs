@@ -23,8 +23,8 @@ namespace MonsterAdventure.Editor
             List<Base> bases;
 
             Rect rect = new Rect();
-            rect.width = 100;
-            rect.height = 100;
+            rect.width = 10;
+            rect.height = 10;
             Vector2 offset = rect.size/2;
 
             foreach (BaseType baseType in basePerType.Keys)
