@@ -10,15 +10,19 @@ namespace MonsterAdventure
     {
         public Color blueColor = Color.blue;
         public float blueRatio = 0.25f;
+        public Sprite[] blueSprites; 
 
         public Color greenColor = Color.green;
         public float greenRatio = 0.2f;
+        public Sprite[] greenSprites;
 
         public Color whiteColor = Color.white;
         public float whiteRatio = 0.12f;
+        public Sprite[] whiteSprites;
 
         public Color blackColor = Color.black;
         public float blackRatio = 0.47f;
+        public Sprite[] blackSprites;
 
         public Biome biomePrefab; 
 
@@ -90,6 +94,7 @@ namespace MonsterAdventure
                     BiomeType type = GetBiomeType(sample);
 
                     AssignBiomeTypeToChunk(chunks[i][j], type);
+                    chunks[i][j].Generate(greenSprites[0]);
                 }
             }
         }
@@ -97,7 +102,7 @@ namespace MonsterAdventure
         private void AssignBiomeTypeToChunk(Chunk chunk, BiomeType type)
         {
             chunk.SetBiomeType(type);
-            chunk.GetComponent<SpriteRenderer>().color = GetColor(chunk.GetBiomeType());
+            //chunk.GetComponent<SpriteRenderer>().color = GetColor(chunk.GetBiomeType());
         }
 
         private void SortPerBiomes(List<List<Chunk>> chunks)

@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using Delaunay.Geo;
 using UnityEngine;
 
 namespace MonsterAdventure
 {
+    [RequireComponent(typeof(MovableGrid))]
     public class Map : MonoBehaviour
     {
         // params
@@ -25,9 +25,12 @@ namespace MonsterAdventure
         public BiomeManager biomeManager;
         public BaseManager baseManager;
 
+        // others
+        private MovableGrid _movableGrid;
+
         private void Awake()
         {
-            // nothing
+            _movableGrid = GetComponent<MovableGrid>();
         }
 
         public void Construct()
@@ -48,6 +51,10 @@ namespace MonsterAdventure
 
             // then generate bases
             baseManager.Generate();
+
+            // we set the movable grid
+            int coord = (int)mapSize/2 + 1;
+            _movableGrid.SetPosition(coord, coord);
         }
     }
 }

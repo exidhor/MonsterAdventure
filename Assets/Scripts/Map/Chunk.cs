@@ -8,12 +8,19 @@ namespace MonsterAdventure
 {
     public class Chunk : MonoBehaviour
     {
+        public static uint size;
+        public static Tile tilePrefab;
+
         private BiomeType _biomeType;
         private Zone _zone;
         private int _coordsInGrid_x;
         private int _coordsInGrid_y;
 
         private int _distanceToLimit;
+
+        private List<List<Tile>> _tiles;
+
+        private bool _isActive = false;
 
         private void Awake()
         {
@@ -22,6 +29,43 @@ namespace MonsterAdventure
             _coordsInGrid_x = 0;
             _coordsInGrid_y = 0;
             _distanceToLimit = -1;
+
+            transform.localScale = new Vector2(size, size);
+        }
+
+        public void Generate(Sprite sprite)
+        {
+            Vector2 chunkSize = new Vector2(size, size);
+            Vector2 offset = (chunkSize - new Vector2(1, 1)) / 2;
+
+            _tiles = new List<List<Tile>>();
+
+            for (int i = 0; i < size; i++)
+            {
+                _tiles.Add(new List<Tile>());
+
+                for (int j = 0; j < size; j++)
+                {
+                    _tiles[i].Add(InstantiateTile(i, j, offset));
+                    _tiles[i][j].SetSprite(sprite);
+                }
+            }
+        }
+
+        public void SetActive(bool state)
+        {
+            _isActive = state;
+
+            // todo
+
+            if (_isActive)
+            {
+                // retrieve needed tile and object
+            }
+            else
+            {
+                // return go to pool allocator
+            }
         }
 
         public void SetPositionInGrid(int x, int y)
@@ -114,6 +158,21 @@ namespace MonsterAdventure
             }
 
             return false;
+        }
+
+        private Tile InstantiateTile(int x, int y, Vector2 offset)
+        {
+            Tile tile = Instantiate<Tile>(tilePrefab);
+            tile.transform.parent = gameObject.transform;
+
+            Vector2 position = tile.transform.parent.position;
+
+            position += new Vector2(x, y) - offset;
+
+            tile.transform.position = position;
+            tile.name = tilePrefab.name + " (" + x + ", " + y + ")";
+
+            return tile;
         }
     }
 }

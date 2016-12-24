@@ -1,15 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.WSA;
 
 namespace MonsterAdventure
 {
     public class ChunkManager : MonoBehaviour
     {
-        public bool drawDistance = true;
+        public uint chunkSize = 100;
 
-        public Chunk[] chunkPrefabs;
+        public bool drawGrid = true;
+        public bool drawDistance = false;
+        public bool drawColor = true;
+
+        public Chunk chunkPrefab;
+        public Tile tilePrefab;
         public ZoneManager zoneManager;
+        public BiomeManager biomeManger;
 
         private List<List<Chunk>> _chunks;
 
@@ -17,11 +24,14 @@ namespace MonsterAdventure
         {
             Vector2 mapSize;
             mapSize.x = size;
-            mapSize.y = size; 
+            mapSize.y = size;
+
+            Chunk.size = chunkSize;
+            Chunk.tilePrefab = tilePrefab;
 
             _chunks = new List<List<Chunk>>();
 
-            Vector2 offset = (mapSize - new Vector2(1, 1)) / 2;
+            Vector2 offset = (mapSize * chunkSize - new Vector2(chunkSize, chunkSize)) / 2;
 
             for (int i = 0; i < mapSize.x; i++)
             {
@@ -29,19 +39,13 @@ namespace MonsterAdventure
 
                 for (int j = 0; j < mapSize.y; j++)
                 {
-                    if (chunkPrefabs.Length == 0)
-                    {
-                        Debug.LogError("No chunkPrefabs set");
-                    }
+                    _chunks[i].Add(InstantiateChunk(chunkPrefab, i, j));
 
-                    Chunk prefab = chunkPrefabs[0];
+                    Vector2 chunkPosition;
+                    chunkPosition.x = i * chunkSize - offset.x;
+                    chunkPosition.y = j * chunkSize - offset.y;
 
-                    _chunks[i].Add(InstantiateTile(prefab, i, j));
-
-                    float x = i * _chunks[i][j].transform.lossyScale.x - offset.x;
-                    float y = j * _chunks[i][j].transform.lossyScale.y - offset.y;
-
-                    _chunks[i][j].transform.position = new Vector2(x, y);
+                    _chunks[i][j].transform.position = chunkPosition;
                 }
             }
         }
@@ -65,7 +69,7 @@ namespace MonsterAdventure
             return (uint) _chunks[0].Count;
         }
 
-        private Chunk InstantiateTile(Chunk prefab, int x, int y)
+        private Chunk InstantiateChunk(Chunk prefab, int x, int y)
         {
             Chunk chunk = Instantiate<Chunk>(prefab);
             chunk.transform.parent = gameObject.transform;

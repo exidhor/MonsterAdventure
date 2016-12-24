@@ -13,15 +13,18 @@ namespace MonsterAdventure
 
         public Texture blopIcon;
         public uint numberOfBlopBase = 9;
-        public uint blopMinDist = 10;
+        public uint blopMinDistToLimit = 5;
+        public uint blopMinGap = 10;
 
         public Texture judgeIcon;
         public uint numberofJudgeBase = 3;
-        public uint judgeMinDist = 5;
+        public uint judgeMinDistToLimit = 5;
+        public uint judgeMinGap = 5;
 
         public Texture monsterIcon;
         public uint numberOfMonsterBase = 4;
-        public uint monsterMinDist = 5;
+        public uint monsterMinDistToLimit = 5;
+        public uint monsterMinGap = 5;
 
         public bool drawGizmoBase = true;
 
@@ -51,7 +54,8 @@ namespace MonsterAdventure
         private void GenerateBases(BaseType baseType)
         {
             uint numberOfBaseToGenerate = GetNumberOfBase(baseType);
-            uint minDist = GetMinDist(baseType);
+            uint minDist = GetMinDistToLimit(baseType);
+            uint minGap = GetMinGap(baseType);
             BiomeType biomeType = GetBiomeTypeAccordingTo(baseType);
 
             List<Chunk> foundedChunks = biomeManager.GetChunkFromMinDistance(biomeType, (int)minDist);
@@ -70,7 +74,7 @@ namespace MonsterAdventure
 
                 // remove the tile and the other at the min dist
                 foundedChunks.RemoveAt(randomIndex);
-                RemoveChunks(ref foundedChunks, chunk, (int)minDist);
+                RemoveChunks(ref foundedChunks, chunk, (int)minGap);
                 numberOfBaseToGenerate--;
             }
         }
@@ -133,18 +137,35 @@ namespace MonsterAdventure
             return 0;
         }
 
-        private uint GetMinDist(BaseType baseType)
+        private uint GetMinGap(BaseType baseType)
         {
             switch (baseType)
             {
                 case BaseType.Blop:
-                    return blopMinDist;
+                    return blopMinGap;
 
                 case BaseType.Judge:
-                    return judgeMinDist;
+                    return judgeMinGap;
 
                 case BaseType.Monster:
-                    return monsterMinDist;
+                    return monsterMinGap;
+            }
+
+            return 0;
+        }
+
+        private uint GetMinDistToLimit(BaseType baseType)
+        {
+            switch (baseType)
+            {
+                case BaseType.Blop:
+                    return blopMinDistToLimit;
+
+                case BaseType.Judge:
+                    return judgeMinDistToLimit;
+
+                case BaseType.Monster:
+                    return monsterMinDistToLimit;
             }
 
             return 0;
