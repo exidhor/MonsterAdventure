@@ -23,7 +23,7 @@ namespace MonsterAdventure
         public ChunkManager chunkManager;
         public ZoneManager zoneManager;
         public BiomeManager biomeManager;
-        public BaseManager baseManager;
+        public PlaceManager baseManager;
 
         // others
         private MovableGrid _movableGrid;

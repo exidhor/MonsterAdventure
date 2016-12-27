@@ -6,6 +6,10 @@ using UnityEngine;
 
 namespace MonsterAdventure
 {
+    /// <summary>
+    /// Represents a specific ecostystem around the world.
+    /// It means that a <see cref="Biome" /> define differents <see cref="Zone" /> 
+    /// </summary>
     public class Biome : MonoBehaviour
     {
         public List<Chunk> chunks;
@@ -13,17 +17,30 @@ namespace MonsterAdventure
 
         private Dictionary<int, List<Chunk>> _sortedChunks;
 
+        /// <summary>
+        /// Initiliaze the parameters
+        /// </summary>
         private void Awake()
         {
             chunks = new List<Chunk>();
             _sortedChunks = new Dictionary<int, List<Chunk>>();
         }
 
+        /// <summary>
+        /// Extend the <see cref="Biome" /> with the <see cref="Chunk" />
+        /// </summary>
+        /// <param name="chunk">The new Chunk</param>
         public void Add(Chunk chunk)
         {
             chunks.Add(chunk);
         }
 
+        /// <summary>
+        /// Retrieve every <see cref="Chunk" /> which are at the
+        /// a minimal specific distance (in area unit) to an other <see cref="Biome" />
+        /// </summary>
+        /// <param name="minDistance">The minimal distance in area unit.</param>
+        /// <returns>The <see cref="Chunk" /> founded</returns>
         public List<Chunk> GetChunksFromMinDistance(int minDistance)
         {
             List<Chunk> foundedChunks = new List<Chunk>();
@@ -39,6 +56,10 @@ namespace MonsterAdventure
             return foundedChunks;
         }
 
+        /// <summary>
+        /// Sort the <see cref="Chunk" /> by distance to another <see cref="Biome" />
+        /// </summary>
+        /// <param name="allChunks">Every Chunks we want to sort</param>
         public void Organize(List<List<Chunk>> allChunks)
         {
             List<Chunk> toSort = new List<Chunk>(chunks);
@@ -125,6 +146,16 @@ namespace MonsterAdventure
             //}
         }
 
+        /// <summary>
+        /// Check if the <see cref="Chunk" /> at the specific position is near
+        /// a distance determined <see cref="Chunk" />.
+        /// This function is usefull to organize the <see cref="Biome" />
+        /// </summary>
+        /// <param name="x">The abs position in the chunk grid</param>
+        /// <param name="y">The ord position in the chunk grid</param>
+        /// <param name="allChunks">All the Chunk of the <see cref="Biome" /></param>
+        /// <returns><code>true</code> if the <see cref="Chunk" /> is near a distance
+        /// determined <see cref="Chunk" />, <code>false</code> otherwise</returns>
         private bool IsNearDeterminedDistance(int x, int y, List<List<Chunk>> allChunks)
         {
             // check at the left

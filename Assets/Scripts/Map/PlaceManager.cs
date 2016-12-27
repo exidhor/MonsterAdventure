@@ -7,81 +7,84 @@ using UnityEngine;
 
 namespace MonsterAdventure
 {
-    public class BaseManager : MonoBehaviour
+    /// <summary>
+    /// Manage and construct the places with given rules.
+    /// </summary>
+    public class PlaceManager : MonoBehaviour
     {
-        public Base basePrefab;
+        public Place basePrefab;
 
         public Texture blopIcon;
-        public uint numberOfBlopBase = 9;
+        public uint numberOfBlopPlace = 9;
         public uint blopMinDistToLimit = 5;
         public uint blopMinGap = 10;
 
         public Texture judgeIcon;
-        public uint numberofJudgeBase = 3;
+        public uint numberofJudgePlace = 3;
         public uint judgeMinDistToLimit = 5;
         public uint judgeMinGap = 5;
 
         public Texture monsterIcon;
-        public uint numberOfMonsterBase = 4;
+        public uint numberOfMonsterPlace = 4;
         public uint monsterMinDistToLimit = 5;
         public uint monsterMinGap = 5;
 
-        public bool drawGizmoBase = true;
+        public bool drawGizmoPlace = true;
 
         public BiomeManager biomeManager;
         public RandomGenerator randomGenerator;
 
-        private Dictionary<BaseType, List<Base>> _basesPerType;
+        private Dictionary<PlaceType, List<Place>> _basesPerType;
 
         public void Construct()
         {
-            _basesPerType = new Dictionary<BaseType, List<Base>>();
+            _basesPerType = new Dictionary<PlaceType, List<Place>>();
 
-            foreach (BaseType biomeType in Enum.GetValues(typeof(BaseType)))
+            foreach (PlaceType biomeType in Enum.GetValues(typeof(PlaceType)))
             {
-                _basesPerType.Add(biomeType, new List<Base>());
+                _basesPerType.Add(biomeType, new List<Place>());
             }
         }
 
         public void Generate()
         {
-            foreach (BaseType baseType in _basesPerType.Keys)
+            foreach (PlaceType baseType in _basesPerType.Keys)
             {
-                GenerateBases(baseType);
+                GeneratePlaces(baseType);
             }
         }
 
-        private void GenerateBases(BaseType baseType)
+        private void GeneratePlaces(PlaceType baseType)
         {
-            uint numberOfBaseToGenerate = GetNumberOfBase(baseType);
+            uint numberOfPlaceToGenerate = GetNumberOfPlace(baseType);
             uint minDist = GetMinDistToLimit(baseType);
             uint minGap = GetMinGap(baseType);
             BiomeType biomeType = GetBiomeTypeAccordingTo(baseType);
 
             List<Chunk> foundedChunks = biomeManager.GetChunkFromMinDistance(biomeType, (int)minDist);
 
-            while (numberOfBaseToGenerate > 0 && foundedChunks.Count > 0)
+            while (numberOfPlaceToGenerate > 0 && foundedChunks.Count > 0)
             {
                 // find the chunk
                 int randomIndex = randomGenerator.Next(foundedChunks.Count - 1);
                 Chunk chunk = foundedChunks[randomIndex];
 
                 // create the base
-                Base newBase = InstantiateBase(baseType);
-                newBase.Construct(chunk.GetX(), chunk.GetY());
-                newBase.transform.position = chunk.transform.position;
-                _basesPerType[baseType].Add(newBase);
+                Place newPlace = InstantiatePlace(baseType);
+                newPlace.Construct(chunk.GetX(), chunk.GetY());
+                newPlace.transform.position = chunk.transform.position;
+                _basesPerType[baseType].Add(newPlace);
 
                 // remove the tile and the other at the min dist
                 foundedChunks.RemoveAt(randomIndex);
                 RemoveChunks(ref foundedChunks, chunk, (int)minGap);
-                numberOfBaseToGenerate--;
+                numberOfPlaceToGenerate--;
             }
         }
 
-        private Base InstantiateBase(BaseType baseType)
+        private Place InstantiatePlace(PlaceType baseType)
         {
-            Base baseResult = Instantiate<Base>(basePrefab);
+            Place baseResult = Instantiate<Place>(basePrefab);
             baseResult.transform.parent = gameObject.transform;
             baseResult.name = baseType.ToString();
 
@@ -103,92 +106,92 @@ namespace MonsterAdventure
             }
         }
 
-        public Texture GetTextureIcon(BaseType baseType)
+        public Texture GetTextureIcon(PlaceType baseType)
         {
             switch (baseType)
             {
-                case BaseType.Blop:
+                case PlaceType.Blop:
                     return blopIcon;
 
-                case BaseType.Judge:
+                case PlaceType.Judge:
                     return judgeIcon;
 
-                case BaseType.Monster:
+                case PlaceType.Monster:
                     return monsterIcon;
             }
 
             return null;
         }
 
-        private uint GetNumberOfBase(BaseType baseType)
+        private uint GetNumberOfPlace(PlaceType baseType)
         {
             switch (baseType)
             {
-                case BaseType.Blop:
-                    return numberOfBlopBase;
+                case PlaceType.Blop:
+                    return numberOfBlopPlace;
 
-                case BaseType.Judge:
-                    return numberofJudgeBase;
+                case PlaceType.Judge:
+                    return numberofJudgePlace;
 
-                case BaseType.Monster:
-                    return numberOfMonsterBase;
+                case PlaceType.Monster:
+                    return numberOfMonsterPlace;
             }
 
             return 0;
         }
 
-        private uint GetMinGap(BaseType baseType)
+        private uint GetMinGap(PlaceType baseType)
         {
             switch (baseType)
             {
-                case BaseType.Blop:
+                case PlaceType.Blop:
                     return blopMinGap;
 
-                case BaseType.Judge:
+                case PlaceType.Judge:
                     return judgeMinGap;
 
-                case BaseType.Monster:
+                case PlaceType.Monster:
                     return monsterMinGap;
             }
 
             return 0;
         }
 
-        private uint GetMinDistToLimit(BaseType baseType)
+        private uint GetMinDistToLimit(PlaceType baseType)
         {
             switch (baseType)
             {
-                case BaseType.Blop:
+                case PlaceType.Blop:
                     return blopMinDistToLimit;
 
-                case BaseType.Judge:
+                case PlaceType.Judge:
                     return judgeMinDistToLimit;
 
-                case BaseType.Monster:
+                case PlaceType.Monster:
                     return monsterMinDistToLimit;
             }
 
             return 0;
         }
 
-        public static BiomeType GetBiomeTypeAccordingTo(BaseType baseType)
+        public static BiomeType GetBiomeTypeAccordingTo(PlaceType baseType)
         {
             switch (baseType)
             {
-                case BaseType.Blop:
+                case PlaceType.Blop:
                     return BiomeType.Green;
 
-                case BaseType.Judge:
+                case PlaceType.Judge:
                     return BiomeType.Black;
 
-                case BaseType.Monster:
+                case PlaceType.Monster:
                     return BiomeType.White;
             }
 
             return BiomeType.None;
         }
 
-        public Dictionary<BaseType, List<Base>> GetBasesPerType()
+        public Dictionary<PlaceType, List<Place>> GetPlacesPerType()
         {
             return _basesPerType;
         }

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MonsterAdventure
 {
-    public enum BaseType
+    public enum PlaceType
     {
         Blop = 0,
         Judge,

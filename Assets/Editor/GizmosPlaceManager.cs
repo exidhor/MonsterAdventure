@@ -6,36 +6,36 @@ using UnityEngine;
 
 namespace MonsterAdventure.Editor
 {
-    class GizmosBaseManager
+    class GizmosPlaceManager
     {
         [DrawGizmo(GizmoType.Selected | GizmoType.Active)]
-        static void DrawGizmoForMyScript(BaseManager baseManager, GizmoType gizmoType)
+        static void DrawGizmoForMyScript(PlaceManager baseManager, GizmoType gizmoType)
         {
-            if (!baseManager.drawGizmoBase)
+            if (!baseManager.drawGizmoPlace)
                 return;
 
-            Dictionary<BaseType, List<Base>> basePerType = baseManager.GetBasesPerType();
+            Dictionary<PlaceType, List<Place>> basePerType = baseManager.GetPlacesPerType();
 
             if (basePerType == null)
                 return;
 
             Texture texture;
-            List<Base> bases;
+            List<Place> bases;
 
             Rect rect = new Rect();
             rect.width = 10;
             rect.height = 10;
             Vector2 offset = rect.size/2;
 
-            foreach (BaseType baseType in basePerType.Keys)
+            foreach (PlaceType baseType in basePerType.Keys)
             {
                 bases = basePerType[baseType];
 
-                foreach (Base currentBase in bases)
+                foreach (Place currentPlace in bases)
                 {
                     texture = baseManager.GetTextureIcon(baseType);
 
-                    Vector2 position = currentBase.transform.position;
+                    Vector2 position = currentPlace.transform.position;
                     position -= offset;
 
                     rect.position = position;

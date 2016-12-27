@@ -6,6 +6,9 @@ using UnityEngine;
 
 namespace MonsterAdventure
 {
+    /// <summary>
+    /// Represent an area unit.
+    /// </summary>
     public class Chunk : MonoBehaviour
     {
         public static uint size;
@@ -22,6 +25,9 @@ namespace MonsterAdventure
 
         private bool _isActive = false;
 
+        /// <summary>
+        /// Initialize the <see cref="Chunk" /> parameters
+        /// </summary>
         private void Awake()
         {
             _biomeType = BiomeType.None;
@@ -33,6 +39,10 @@ namespace MonsterAdventure
             transform.localScale = new Vector2(size, size);
         }
 
+        /// <summary>
+        /// Generate the <see cref="Chunk" /> content. (currently, it's some <see cref="Tile" />s)
+        /// </summary>
+        /// <param name="sprite"></param>
         public void Generate(Sprite sprite)
         {
             Vector2 chunkSize = new Vector2(size, size);
@@ -68,47 +78,88 @@ namespace MonsterAdventure
             }
         }
 
+        /// <summary>
+        /// Set the <see cref="Chunk" /> position in the <see cref="Chunk" /> grid
+        /// </summary>
+        /// <param name="x">The abs coord in the chunk grid</param>
+        /// <param name="y">The ord coord in the chunk grid</param>
         public void SetPositionInGrid(int x, int y)
         {
             _coordsInGrid_x = x;
             _coordsInGrid_y = y;
         }
 
+        /// <summary>
+        /// Set the <see cref="BiomeType" /> of the <see cref="Chunk" />
+        /// </summary>
+        /// <param name="biomeType">The new type of the chunk</param>
         public void SetBiomeType(BiomeType biomeType)
         {
             _biomeType = biomeType;
         }
 
+        /// <summary>
+        /// Return the abs coord in the <see cref="Chunk" /> grid
+        /// </summary>
+        /// <returns>The abs coord in the chunk grid</returns>
         public int GetX()
         {
             return _coordsInGrid_x;
         }
 
+        /// <summary>
+        /// Return the ord coord in the <see cref="Chunk" /> grid
+        /// </summary>
+        /// <returns>The ord coord in the chun grid</returns>
         public int GetY()
         {
             return _coordsInGrid_y;
         }
 
+        /// <summary>
+        /// Set the membership to the <see cref="Zone" />
+        /// </summary>
+        /// <param name="zone">The zone</param>
         public void SetZone(Zone zone)
         {
             _zone = zone;
         }
 
+        /// <summary>
+        /// Return the <see cref="BiomeType" /> of the <see cref="Chunk" />
+        /// </summary>
+        /// <returns>The BiomeType of the Chunk</returns>
         public BiomeType GetBiomeType()
         {
             return _biomeType;
         }
 
+        /// <summary>
+        /// Return the <see cref="Zone" /> of the <see cref="Chunk" />
+        /// </summary>
+        /// <returns>The <see cref="Zone" /> which the Chunk belong to</returns>
         public Zone GetZone()
         {
             return _zone;
         }
 
+        /// <summary>
+        /// Set the distance to the limit.
+        /// </summary>
+        /// <remarks>(the limit is two adjacent <see cref="Chunk" />s
+        /// which belong to different <see cref="Biome" />s).</remarks>
+        /// <param name="distanceToLimit">The distance to the limit</param>
         public void SetDistanceToLimit(int distanceToLimit)
         {
             _distanceToLimit = distanceToLimit;
         }
 
+        /// <summary>
+        /// Return the distance to the limit 
+        /// </summary>
+        /// <remarks>(the limit is two adjacent <see cref="Chunk" />s
+        /// which belong to different <see cref="Biome" />s).</remarks>
+        /// <returns></returns>
         public int GetDistanceToLimit()
         {
             return _distanceToLimit;

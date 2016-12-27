@@ -5,6 +5,9 @@ using System.Text;
 
 namespace MonsterAdventure
 {
+    /// <summary>
+    /// Represent a distinct <see cref="Biome" />
+    /// </summary>
     public enum BiomeType
     {
         None = 0,

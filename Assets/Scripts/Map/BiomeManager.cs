@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 
 namespace MonsterAdventure
 {
+    /// <summary>
+    /// Construct and manage all the different <see cref="Biome" /> in the map.
+    /// The <see cref="Biome" /> construction is done from the <see cref="NoiseGenerator" />.
+    /// </summary>
     public class BiomeManager : MonoBehaviour
     {
         public Color blueColor = Color.blue;
@@ -35,6 +37,10 @@ namespace MonsterAdventure
 
         private Dictionary<BiomeType, Biome> _biomes;
 
+        /// <summary>
+        /// Construct the different <see cref="Biome" /> and construct
+        /// the <see cref="NoiseGenerator" />
+        /// </summary>
         public void Construct()
         {
             // normalize the ratio value
@@ -57,6 +63,12 @@ namespace MonsterAdventure
             noiseGenerator.Construct();
         }
 
+        /// <summary>
+        /// Instantiate the <see cref="Biome" /> in the scene from the
+        /// biome prefab.
+        /// </summary>
+        /// <param name="type">The BiomeType of the Biome</param>
+        /// <returns>The new instantiated Biome</returns>
         private Biome InstantiateBiome(BiomeType type)
         {
             Biome biome = Instantiate<Biome>(biomePrefab);
@@ -66,6 +78,13 @@ namespace MonsterAdventure
             return biome;
         }
 
+        /// <summary>
+        /// Apply the noise value from the <see cref="NoiseGenerator" /> to the
+        /// chunk grid to generate the different <see cref="Biome" />.
+        /// </summary>
+        /// <param name="chunks">The chunks list to fill</param>
+        /// <param name="mapSize">The width/height of the map</param>
+        /// <param name="random">The random generator</param>
         public void Generate(List<List<Chunk>> chunks, int mapSize, RandomGenerator random)
         {
             noiseGenerator.Generate(mapSize, transform, random);
@@ -77,6 +96,12 @@ namespace MonsterAdventure
             OrganizeBiomes(chunks);
         }
 
+        /// <summary>
+        /// Retrieve all the <see cref="Chunk" /> at the specific distance
+        /// </summary>
+        /// <param name="biomeType">The target BiomeType of the founded chunks</param>
+        /// <param name="minDistance">The minimal distance to another biome</param>
+        /// <returns>The list of founded chunks</returns>
         public List<Chunk> GetChunkFromMinDistance(BiomeType biomeType, int minDistance)
         {
             Biome targetBiome = _biomes[biomeType];
@@ -84,6 +109,10 @@ namespace MonsterAdventure
             return targetBiome.GetChunksFromMinDistance(minDistance);
         }
 
+        /// <summary>
+        /// Blend the noise value with the <see cref="Chunk" /> to create <see cref="Biome" />
+        /// </summary>
+        /// <param name="chunks">The chunk grid</param>
         private void ApplyNoise(List<List<Chunk>> chunks)
         {
             for (int i = 0; i < chunks.Count; i++)
@@ -99,12 +128,21 @@ namespace MonsterAdventure
             }
         }
 
+        /// <summary>
+        /// Set the <see cref="BiomeType" /> to the target <see cref="Chunk" />
+        /// </summary>
+        /// <param name="chunk">The targeted chunk</param>
+        /// <param name="type">The BiomeType</param>
         private void AssignBiomeTypeToChunk(Chunk chunk, BiomeType type)
         {
             chunk.SetBiomeType(type);
             //chunk.GetComponent<SpriteRenderer>().color = GetColor(chunk.GetBiomeType());
         }
 
+        /// <summary>
+        /// Sort every <see cref="Chunk" /> per <see cref="BiomeType" />
+        /// </summary>
+        /// <param name="chunks">The chunk grid</param>
         private void SortPerBiomes(List<List<Chunk>> chunks)
         {
             for (int i = 0; i < chunks.Count; i++)
@@ -127,6 +165,10 @@ namespace MonsterAdventure
             }
         }
 
+        /// <summary>
+        /// Organize every <see cref="Biome" />
+        /// </summary>
+        /// <param name="chunks">The chunk grid</param>
         private void OrganizeBiomes(List<List<Chunk>> chunks)
         {
             foreach (Biome biome in _biomes.Values)
@@ -135,6 +177,11 @@ namespace MonsterAdventure
             }
         }
 
+        /// <summary>
+        /// Find the <see cref="Color" /> of a <see cref="Chunk" /> by the <see cref="BiomeType" />
+        /// </summary>
+        /// <param name="type">The BiomeType</param>
+        /// <returns>The Color for the Chunk</returns>
         public Color GetColor(BiomeType type)
         {
             switch (type)
@@ -156,6 +203,11 @@ namespace MonsterAdventure
             }
         }
 
+        /// <summary>
+        /// Find the <see cref="BiomeType" /> of a <see cref="Chunk" /> from the noise value
+        /// </summary>
+        /// <param name="value">The noise value</param>
+        /// <returns>The BiomeType</returns>
         public BiomeType GetBiomeType(float value)
         {
             float ratio = blueRatioNormalized;
