@@ -23,7 +23,7 @@ namespace MonsterAdventure
         public ChunkManager chunkManager;
         public ZoneManager zoneManager;
         public BiomeManager biomeManager;
-        public PlaceManager baseManager;
+        public PlaceManager placeManager;
 
         // others
         private MovableGrid _movableGrid;
@@ -38,7 +38,7 @@ namespace MonsterAdventure
             chunkManager.Construct((int)mapSize);
             zoneManager.Construct();
             biomeManager.Construct();
-            baseManager.Construct();
+            placeManager.Construct();
         }
 
         public void Generate()
@@ -50,7 +50,7 @@ namespace MonsterAdventure
             zoneManager.Generate(chunkManager.GetChunks());
 
             // then generate bases
-            baseManager.Generate();
+            placeManager.Generate();
 
             // we set the movable grid
             int coord = (int)mapSize/2 + 1;
