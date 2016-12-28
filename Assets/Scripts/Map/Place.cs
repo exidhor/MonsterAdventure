@@ -11,8 +11,7 @@ namespace MonsterAdventure
     /// </summary>
     public class Place : MonoBehaviour
     {
-        private int _coord_x;
-        private int _coord_y;
+        private Coords _coords;
 
         public PlaceType _type;
 
@@ -21,28 +20,18 @@ namespace MonsterAdventure
         /// </summary>
         /// <param name="x">The abs coord in the chunk grid</param>
         /// <param name="y">The ord coord in the chunk grid</param>
-        public void Construct(int x, int y)
+        public void Construct(Coords coords)
         {
-            _coord_x = x;
-            _coord_y = y;
+            _coords = coords;
         }
 
         /// <summary>
-        /// Return the abs coord in the chunk grid
+        /// Return the position in the chunk grid
         /// </summary>
-        /// <returns>The abs coord in the chunk grid</returns>
-        public int GetCoordX()
+        /// <returns>The position in the chunk grid</returns>
+        public Coords GetCoords()
         {
-            return _coord_x;
-        }
-
-        /// <summary>
-        /// Return the abs coord in the chunk grid
-        /// </summary>
-        /// <returns>The abs coord in the chunk grid</returns>
-        public int GetCoordY()
-        {
-            return _coord_y;
+            return _coords;
         }
     }
 }

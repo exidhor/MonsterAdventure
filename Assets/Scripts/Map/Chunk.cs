@@ -16,8 +16,7 @@ namespace MonsterAdventure
 
         private BiomeType _biomeType;
         private Zone _zone;
-        private int _coordsInGrid_x;
-        private int _coordsInGrid_y;
+        private Coords _coordsInGrid;
 
         private int _distanceToLimit;
 
@@ -32,8 +31,6 @@ namespace MonsterAdventure
         {
             _biomeType = BiomeType.None;
             _zone = null;
-            _coordsInGrid_x = 0;
-            _coordsInGrid_y = 0;
             _distanceToLimit = -1;
 
             transform.localScale = new Vector2(size, size);
@@ -81,12 +78,21 @@ namespace MonsterAdventure
         /// <summary>
         /// Set the <see cref="Chunk" /> position in the <see cref="Chunk" /> grid
         /// </summary>
-        /// <param name="x">The abs coord in the chunk grid</param>
-        /// <param name="y">The ord coord in the chunk grid</param>
+        /// <param name="x">The abs position in the chunk grid</param>
+        /// <param name="y">The ord position in the chunk grid</param>
         public void SetPositionInGrid(int x, int y)
         {
-            _coordsInGrid_x = x;
-            _coordsInGrid_y = y;
+            _coordsInGrid.abs = x;
+            _coordsInGrid.ord = y;
+        }
+
+        /// <summary>
+        /// Set the <see cref="Chunk" /> position in the <see cref="Chunk" /> grid
+        /// </summary>
+        /// <param name="coords">The position in the chunk grid</param>
+        public void SetPositionInGrid(Coords coords)
+        {
+            _coordsInGrid = coords;
         }
 
         /// <summary>
@@ -99,21 +105,12 @@ namespace MonsterAdventure
         }
 
         /// <summary>
-        /// Return the abs coord in the <see cref="Chunk" /> grid
+        /// Return the coord in the <see cref="Chunk" /> grid
         /// </summary>
-        /// <returns>The abs coord in the chunk grid</returns>
-        public int GetX()
+        /// <returns>The coord in the chunk grid</returns>
+        public Coords GetCoords()
         {
-            return _coordsInGrid_x;
-        }
-
-        /// <summary>
-        /// Return the ord coord in the <see cref="Chunk" /> grid
-        /// </summary>
-        /// <returns>The ord coord in the chun grid</returns>
-        public int GetY()
-        {
-            return _coordsInGrid_y;
+            return _coordsInGrid;
         }
 
         /// <summary>
@@ -167,8 +164,8 @@ namespace MonsterAdventure
 
         public int GetDistanceFrom(Chunk chunk)
         {
-            int dist_x = Math.Abs(chunk._coordsInGrid_x - _coordsInGrid_x);
-            int dist_y = Math.Abs(chunk._coordsInGrid_y - _coordsInGrid_y);
+            int dist_x = Math.Abs(chunk._coordsInGrid.abs - _coordsInGrid.abs);
+            int dist_y = Math.Abs(chunk._coordsInGrid.ord - _coordsInGrid.ord);
 
             return dist_x + dist_y;
         }
@@ -176,8 +173,8 @@ namespace MonsterAdventure
         public static bool BelongToBiomeLimit(Chunk chunk, List<List<Chunk>> tiles)
         {
             BiomeType currentType = chunk.GetBiomeType();
-            int current_x = chunk._coordsInGrid_x;
-            int current_y = chunk._coordsInGrid_y;
+            int current_x = chunk._coordsInGrid.abs;
+            int current_y = chunk._coordsInGrid.ord;
 
             // check at the left
             if (current_x > 0 

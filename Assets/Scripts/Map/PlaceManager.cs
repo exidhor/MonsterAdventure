@@ -71,7 +71,7 @@ namespace MonsterAdventure
 
                 // create the base
                 Place newPlace = InstantiatePlace(baseType);
-                newPlace.Construct(chunk.GetX(), chunk.GetY());
+                newPlace.Construct(chunk.GetCoords());
                 newPlace.transform.position = chunk.transform.position;
                 _basesPerType[baseType].Add(newPlace);
 

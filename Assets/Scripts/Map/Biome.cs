@@ -108,8 +108,7 @@ namespace MonsterAdventure
 
                 for (int i = 0; i < toSort.Count; i++)
                 {
-                    if (IsNearDeterminedDistance(toSort[i].GetX(),
-                                                 toSort[i].GetY(),
+                    if (IsNearDeterminedDistance(toSort[i].GetCoords(),
                                                  allChunks))
                     {
                         chunksForCurrentDistance.Add(toSort[i]);
@@ -151,19 +150,18 @@ namespace MonsterAdventure
         /// a distance determined <see cref="Chunk" />.
         /// This function is usefull to organize the <see cref="Biome" />
         /// </summary>
-        /// <param name="x">The abs position in the chunk grid</param>
-        /// <param name="y">The ord position in the chunk grid</param>
+        /// <param name="coords">The position in the chunk grid</param>
         /// <param name="allChunks">All the Chunk of the <see cref="Biome" /></param>
         /// <returns><code>true</code> if the <see cref="Chunk" /> is near a distance
         /// determined <see cref="Chunk" />, <code>false</code> otherwise</returns>
-        private bool IsNearDeterminedDistance(int x, int y, List<List<Chunk>> allChunks)
+        private bool IsNearDeterminedDistance(Coords coords, List<List<Chunk>> allChunks)
         {
             // check at the left
             int currentDistance;
 
-            if (x > 0)
+            if (coords.abs > 0)
             {
-                currentDistance = allChunks[x - 1][y].GetDistanceToLimit();
+                currentDistance = allChunks[coords.abs - 1][coords.ord].GetDistanceToLimit();
 
                 if (currentDistance != -1)
                 {
@@ -172,9 +170,9 @@ namespace MonsterAdventure
             }
 
             // check top
-            if (allChunks.Count > 0 && y < allChunks[0].Count - 1)
+            if (allChunks.Count > 0 && coords.ord < allChunks[0].Count - 1)
             {
-                currentDistance = allChunks[x][y + 1].GetDistanceToLimit();
+                currentDistance = allChunks[coords.abs][coords.ord + 1].GetDistanceToLimit();
 
                 if (currentDistance != -1)
                 {
@@ -183,9 +181,9 @@ namespace MonsterAdventure
             }
 
             // check right
-            if (x < allChunks.Count - 1)
+            if (coords.abs < allChunks.Count - 1)
             {
-                currentDistance = allChunks[x + 1][y].GetDistanceToLimit();
+                currentDistance = allChunks[coords.abs + 1][coords.ord].GetDistanceToLimit();
 
                 if (currentDistance != -1)
                 {
@@ -194,9 +192,9 @@ namespace MonsterAdventure
             }
 
             // check bot
-            if (y > 0)
+            if (coords.ord > 0)
             {
-                currentDistance = allChunks[x][y - 1].GetDistanceToLimit();
+                currentDistance = allChunks[coords.abs][coords.ord - 1].GetDistanceToLimit();
 
                 if (currentDistance != -1)
                 {

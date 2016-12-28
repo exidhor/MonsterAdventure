@@ -30,7 +30,7 @@ namespace MonsterAdventure
             // todo : rotate the grid when the player move
             // desynchroniser la position du player (coords) avec le centre de la grille
 
-            text.text = "Coords (" + _chunks[1, 1].GetX() + ", " + _chunks[1, 1].GetY() + ")";
+            text.text = "Coords (" + _chunks[1, 1].GetCoords().abs + ", " + _chunks[1, 1].GetCoords().ord + ")";
         }
 
         public void SetPosition(int centerCoords_x, int centerCoords_y)
@@ -61,8 +61,8 @@ namespace MonsterAdventure
             if (abs == Direction.POSITIVE)
             {
                 // the coords of the top-left corner of the grid
-                Int32 newLastCoord_x = _chunks[2, 0].GetX() + 1;
-                Int32 newLastCoord_y = _chunks[2, 0].GetY();
+                Int32 newLastCoord_x = _chunks[2, 0].GetCoords().abs + 1;
+                Int32 newLastCoord_y = _chunks[2, 0].GetCoords().ord;
 
                 // We rotate the grid
                 _chunks[0, 0].SetActive(false);
@@ -88,8 +88,8 @@ namespace MonsterAdventure
 
             else if (abs == Direction.NEGATIVE)
             {
-                Int32 newFirstCoord_x = _chunks[0, 0].GetX() - 1;
-                Int32 newFirstCoord_y = _chunks[0, 0].GetY();
+                Int32 newFirstCoord_x = _chunks[0, 0].GetCoords().abs - 1;
+                Int32 newFirstCoord_y = _chunks[0, 0].GetCoords().ord;
 
                 _chunks[2, 0].SetActive(false);
                 _chunks[2, 0] = _chunks[1, 0];
@@ -109,8 +109,8 @@ namespace MonsterAdventure
 
             if (ord == Direction.NEGATIVE)
             {
-                Int32 newLastCoord_x = _chunks[0, 0].GetX();
-                Int32 newLastCoord_y = _chunks[0, 0].GetY() - 1;
+                Int32 newLastCoord_x = _chunks[0, 0].GetCoords().abs;
+                Int32 newLastCoord_y = _chunks[0, 0].GetCoords().ord - 1;
 
                 _chunks[0, 2].SetActive(false);
                 _chunks[0, 2] = _chunks[0, 1];
@@ -131,8 +131,8 @@ namespace MonsterAdventure
             else if (ord == Direction.POSITIVE)
             {
 
-                Int32 newFirstCoord_x = _chunks[0, 2].GetX();
-                Int32 newFirstCoord_y = _chunks[0, 2].GetY() + 1;
+                Int32 newFirstCoord_x = _chunks[0, 2].GetCoords().abs;
+                Int32 newFirstCoord_y = _chunks[0, 2].GetCoords().ord + 1;
 
                 _chunks[0, 0].SetActive(false);
                 _chunks[0, 0] = _chunks[0, 1];
