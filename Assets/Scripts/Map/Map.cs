@@ -24,6 +24,7 @@ namespace MonsterAdventure
         public ZoneManager zoneManager;
         public BiomeManager biomeManager;
         public PlaceManager placeManager;
+        public SectorManager sectorManager;
 
         // others
         private MovableGrid _movableGrid;
@@ -35,6 +36,12 @@ namespace MonsterAdventure
 
         public void Construct()
         {
+            // init bounds
+            _bounds = new Rect(new Vector2(), new Vector2(mapSize, mapSize));
+            _bounds.x -= mapSize/2f;
+            _bounds.y -= mapSize/2f;
+
+            sectorManager.Construct(_bounds);
             chunkManager.Construct((int)mapSize);
             zoneManager.Construct();
             biomeManager.Construct();

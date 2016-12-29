@@ -18,7 +18,8 @@ namespace MonsterAdventure
 
         public void SetSprite(Sprite sprite)
         {
-            _spriteRender.sprite = sprite;
+            _spriteRender.color = new Color(0, 0, 0, 0);
+            //_spriteRender.sprite = sprite;
         }
     }
 }

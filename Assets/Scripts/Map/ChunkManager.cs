@@ -14,7 +14,6 @@ namespace MonsterAdventure
 
         public Chunk chunkPrefab;
         public Tile tilePrefab;
-        public ZoneManager zoneManager;
         public BiomeManager biomeManger;
 
         private List<List<Chunk>> _chunks;
